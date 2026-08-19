@@ -112,7 +112,7 @@
     position:relative}
   .tab.on{color:var(--ink)}
   .tab.on::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);
-    width:26px;height:3px;border-radius:3px;background:var(--grad)}
+    width:26px;height:3px;border-radius:3px;background:var(--accent,var(--grad))}
 
   .pane{padding:18px 18px calc(110px + var(--safe-b))}
   .section-h{display:flex;justify-content:space-between;align-items:center;margin:22px 4px 12px}
@@ -356,7 +356,7 @@ function homeView(){
   const cards=state.trips.map(t=>{
     const cov=/^linear-gradient|^url/.test(t.cover)?t.cover:`url('${t.cover}')`;
     const bg=t.cover.startsWith("data:")?`url('${t.cover}')`:t.cover;
-    const av=t.travelers.slice(0,4).map(p=>`<div class="av">${initials(p.name)}</div>`).join("");
+    const av=t.travelers.slice(0,4).map(p=>`<div class="av" style="background:${accentOf(t)}">${initials(p.name)}</div>`).join("");
     const route=t.destinos&&t.destinos.length>1?
       `<div class="route">${t.destinos.slice(0,3).map((d,i,a)=>`<span class="city">${esc(d.name)}</span>${i<Math.min(a.length,3)-1?'<span class="path"></span>':''}`).join("")}${t.destinos.length>3?'<span class="city">+'+(t.destinos.length-3)+'</span>':''}</div>`:"";
     return `<div class="trip-card" onclick="openTrip('${t.id}')">
@@ -405,11 +405,12 @@ function tripView(t){
         <div class="sub"><span>📍 ${esc(t.destination)}</span><span>·</span><span>${fmtRange(t.start,t.end)}</span></div>
       </div>
     </div>
-    <div class="tabbar">${tabs}</div>
+    <div class="tabbar" style="--accent:${accentOf(t)}">${tabs}</div>
     <div class="scroll"><div class="pane">${pane}</div></div>
   </div>`;
 }
 function setTab(k){curTab=k;render();}
+function accentOf(t){return t.cdColor||"var(--grad)";}
 
 /* ---- Resumen ---- */
 function paneResumen(t){
@@ -422,7 +423,7 @@ function paneResumen(t){
   const totals=expenseTotals(t);
   const totalStr=Object.keys(totals).length?Object.entries(totals).map(([c,v])=>money(v,c)).join(" · "):"—";
   const route=(t.destinos||[]).map((d,i,a)=>`<div class="chip">📍 ${esc(d.name)}</div>`).join("");
-  const people=t.travelers.map(p=>`<div class="chip"><span class="av">${initials(p.name)}</span>${esc(p.name)}</div>`).join("");
+  const people=t.travelers.map(p=>`<div class="chip"><span class="av" style="background:${accentOf(t)}">${initials(p.name)}</span>${esc(p.name)}</div>`).join("");
   return `${cdBox}
     <div class="stat-row">
       <div class="stat"><div class="n">${daysBetween(t.start,t.end)}</div><div class="l">Días</div></div>
@@ -478,6 +479,7 @@ function paneItinerario(t){
 
 /* ---- Lugares ---- */
 function paneLugares(t){
+  const accent=accentOf(t);
   const dests=(t.destinos||[]).map(d=>{
     const places=d.places.map(p=>{
       const pc=PLACE_CATS[p.cat]||PLACE_CATS.otro;
@@ -493,7 +495,7 @@ function paneLugares(t){
     }
     const subParts=[range,d.note].filter(Boolean).join(" · ");
     return `<div class="dest">
-      <div class="dest-h"><div class="dest-pin">📍</div>
+      <div class="dest-h"><div class="dest-pin" style="background:${accent}">📍</div>
         <div style="flex:1"><div class="nm">${esc(d.name)}</div>${subParts?`<div class="sub">${esc(subParts)}</div>`:""}</div>
         <button class="icon-btn" style="background:var(--bg);color:var(--muted)" onclick="event.stopPropagation();sheetAddDest('${t.id}','${d.id}')">✎</button>
       </div>
@@ -521,8 +523,9 @@ function balances(t,cur){
   return map;
 }
 function paneGastos(t){
+  const accent=accentOf(t);
   if(!t.expenses.length)return `<div class="day-empty" style="padding:20px 2px">Aún no hay gastos. Agrega el primero y la app calcula cuánto le toca a cada quien.</div>
-    <button class="btn" onclick="sheetAddExp('${t.id}')">＋ Agregar gasto</button>`;
+    <button class="btn" style="background:${accent}" onclick="sheetAddExp('${t.id}')">＋ Agregar gasto</button>`;
   const curs=[...new Set(t.expenses.map(e=>e.cur))];
   let out="";
   curs.forEach(cur=>{
@@ -530,7 +533,7 @@ function paneGastos(t){
     const rows=t.travelers.map(p=>{
       const v=bal[p.id];const cls=Math.abs(v)<0.5?"zero":v>0?"pos":"neg";
       const txt=Math.abs(v)<0.5?"al día":(v>0?"le deben ":"debe ")+money(Math.abs(v),cur);
-      return `<div class="bal-row"><div class="bal-name"><span class="av">${initials(p.name)}</span>${esc(p.name)}</div><div class="bal-amt ${cls}">${txt}</div></div>`;
+      return `<div class="bal-row"><div class="bal-name"><span class="av" style="background:${accent}">${initials(p.name)}</span>${esc(p.name)}</div><div class="bal-amt ${cls}">${txt}</div></div>`;
     }).join("");
     const settle=settleUp(bal,cur,t);
     const exps=t.expenses.filter(e=>e.cur===cur).map(e=>{
@@ -545,7 +548,7 @@ function paneGastos(t){
       <div class="balance"><h3>Quién debe qué</h3>${rows}${settle?`<div style="margin-top:6px">${settle}</div>`:""}</div>
       ${exps}`;
   });
-  return out+`<button class="btn" style="margin-top:8px" onclick="sheetAddExp('${t.id}')">＋ Agregar gasto</button>`;
+  return out+`<button class="btn" style="margin-top:8px;background:${accent}" onclick="sheetAddExp('${t.id}')">＋ Agregar gasto</button>`;
 }
 function settleUp(bal,cur,t){
   const name=id=>{const p=t.travelers.find(x=>x.id===id);return p?p.name:"?";};
@@ -792,7 +795,7 @@ function sheetAddExp(tid,eid){const t=tget(tid);const e=eid?t.expenses.find(x=>x
         <button id="sp-custom" class="${window._expMethod==='custom'?'on':''}" onclick="setSplit('${tid}','custom')">Montos por persona</button></div>
       <div class="split-note" id="sp-note"></div>
       <div id="e-people"></div></div>
-    <button class="btn" onclick="saveExp('${tid}'${eid?`,'${eid}'`:''})">${e?'Guardar':'Agregar gasto'}</button>
+    <button class="btn" style="background:${accentOf(t)}" onclick="saveExp('${tid}'${eid?`,'${eid}'`:''})">${e?'Guardar':'Agregar gasto'}</button>
     ${e?`<button class="btn danger" style="margin-top:8px" onclick="delExp('${tid}','${eid}')">Eliminar</button>`:''}`));
   renderExpPeople(tid);
 }
