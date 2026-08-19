@@ -109,7 +109,19 @@
   .stat{flex:1;background:var(--surface);border-radius:16px;padding:14px;box-shadow:var(--shadow);text-align:center}
   .stat .n{font-size:22px;font-weight:800;letter-spacing:-.02em}
   .stat .l{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
-  .countdown{background:var(--grad);color:#fff;border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:0 10px 26px rgba(108,92,231,.32)}
+  .countdown{background:var(--grad);color:#fff;border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:0 10px 26px rgba(108,92,231,.32);position:relative}
+  .cd-edit{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;
+    background:rgba(255,255,255,.22);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    display:grid;place-items:center;font-size:15px}
+  .cd-edit:active{transform:scale(.9)}
+  .sw-group-label{font-size:13px;font-weight:700;color:var(--ink-2);margin:14px 4px 10px;text-transform:uppercase;letter-spacing:.04em}
+  .sw-grid{display:flex;flex-wrap:wrap;gap:12px}
+  .sw{width:46px;height:46px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);position:relative}
+  .sw.on{box-shadow:inset 0 0 0 1px rgba(0,0,0,.08),0 0 0 3px var(--violet)}
+  .sw.on::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:900;
+    text-shadow:0 1px 3px rgba(0,0,0,.5);font-size:17px}
+  .sw-fam{display:flex;flex-direction:column;align-items:center;gap:5px;width:60px}
+  .sw-fam .lbl{font-size:11px;color:var(--muted);font-weight:600;text-align:center;line-height:1.1}
   .countdown .big{font-size:32px;font-weight:800;letter-spacing:-.02em}
   .countdown .lbl{font-size:13px;opacity:.92;font-weight:600}
   .chips{display:flex;gap:8px;flex-wrap:wrap}
@@ -132,6 +144,10 @@
   .act .desc{font-size:13px;color:var(--muted);margin-top:5px;line-height:1.4}
   .catpill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:20px;margin-top:7px}
   .day-empty{color:var(--muted);font-size:14px;padding:6px 2px 12px}
+  .map-embed{display:block;position:relative;height:130px;border-radius:12px;overflow:hidden;margin-top:11px;background:#e9eaf0}
+  .map-embed iframe{width:100%;height:100%;border:0;pointer-events:none;display:block}
+  .map-open{position:absolute;left:0;right:0;bottom:0;padding:8px 11px;font-size:12.5px;font-weight:700;color:#fff;
+    background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.6));display:flex;align-items:center;gap:5px}
 
   /* lugares */
   .dest{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
@@ -376,9 +392,11 @@ function setTab(k){curTab=k;render();}
 /* ---- Resumen ---- */
 function paneResumen(t){
   const cd=countdown(t.start);
-  const cdBox=cd>0?`<div class="countdown"><div class="big">Faltan ${cd} días</div><div class="lbl">para ${esc(t.name)} ✨</div></div>`
-    :cd===0?`<div class="countdown"><div class="big">¡Hoy es el día! 🎉</div><div class="lbl">${esc(t.name)}</div></div>`
-    :`<div class="countdown"><div class="big">En curso</div><div class="lbl">Disfruta ${esc(t.name)}</div></div>`;
+  const cs=cdStyle(t);
+  const cdBtn=`<button class="cd-edit" onclick="sheetColor('${t.id}')">🎨</button>`;
+  const cdBox=cd>0?`<div class="countdown" style="${cs}">${cdBtn}<div class="big">Faltan ${cd} días</div><div class="lbl">para ${esc(t.name)}</div></div>`
+    :cd===0?`<div class="countdown" style="${cs}">${cdBtn}<div class="big">¡Hoy es el día! 🎉</div><div class="lbl">${esc(t.name)}</div></div>`
+    :`<div class="countdown" style="${cs}">${cdBtn}<div class="big">En curso</div><div class="lbl">Disfruta ${esc(t.name)}</div></div>`;
   const nActs=t.itinerary.reduce((s,d)=>s+d.acts.length,0);
   const totals=expenseTotals(t);
   const totalStr=Object.keys(totals).length?Object.entries(totals).map(([c,v])=>money(v,c)).join(" · "):"—";
@@ -415,6 +433,7 @@ function paneItinerario(t){
           ${a.loc?`<div class="loc">📍 ${esc(a.loc)}</div>`:""}
           ${a.desc?`<div class="desc">${esc(a.desc)}</div>`:""}
           <span class="catpill" style="background:${c.color}1a;color:${c.color}">${c.emoji} ${c.lbl}</span>
+          ${mapBlock(a.addr)}
         </div></div>`;
     }).join(""):`<div class="day-empty">Sin actividades aún</div>`;
     return `<div class="day">
@@ -534,7 +553,7 @@ function sheetCreateTrip(){
       <div class="traveler-add"><input id="f-tv" placeholder="Nombre" onkeydown="if(event.key==='Enter')addTv()"><button onclick="addTv()">Agregar</button></div>
       <div id="f-tvlist"></div></div>
     <button class="btn" onclick="saveTrip()">Crear viaje</button>`));
-  window._tvs=[{id:uid(),name:"Naomy"}];renderTvs();
+  window._tvs=[{id:uid(),name:"André"}];renderTvs();
 }
 function addTv(){const i=document.getElementById("f-tv");const v=i.value.trim();if(!v)return;
   window._tvs.push({id:uid(),name:v});i.value="";renderTvs();i.focus();}
@@ -592,6 +611,7 @@ function sheetAddAct(tid,date,aid){
       <div class="field" style="flex:2"><label>Nombre</label><input id="a-name" value="${a?esc(a.name):''}" placeholder="Senso-ji"></div></div>
     <div class="field"><label>Categoría</label><div class="catgrid" id="catgrid">${cats}</div></div>
     <div class="field"><label>Ubicación</label><input id="a-loc" value="${a?esc(a.loc):''}" placeholder="Asakusa, Tokio"></div>
+    <div class="field"><label>Dirección (para el mapa)</label><input id="a-addr" value="${a?esc(a.addr||''):''}" placeholder="Senso-ji, 2-3-1 Asakusa, Tokio"></div>
     <div class="field"><label>Descripción</label><textarea id="a-desc" placeholder="Templo más antiguo de Tokio">${a?esc(a.desc):''}</textarea></div>
     <div class="field"><label>Notas</label><textarea id="a-notes" placeholder="Llevar efectivo">${a?esc(a.notes):''}</textarea></div>
     <button class="btn" onclick="saveAct('${tid}','${date}'${aid?`,'${aid}'`:''})">${a?'Guardar':'Agregar'}</button>
@@ -603,7 +623,7 @@ function pickCat(k){window._actCat=k;
 function saveAct(tid,date,aid){const t=tget(tid);
   const name=val("a-name");if(!name){toast("Ponle nombre");return;}
   let day=t.itinerary.find(d=>d.date===date);if(!day){day={id:uid(),date,acts:[]};t.itinerary.push(day);}
-  const data={time:val("a-time"),name,cat:window._actCat,loc:val("a-loc"),desc:val("a-desc"),notes:val("a-notes")};
+  const data={time:val("a-time"),name,cat:window._actCat,loc:val("a-loc"),addr:val("a-addr"),desc:val("a-desc"),notes:val("a-notes")};
   if(aid){const a=day.acts.find(x=>x.id===aid);Object.assign(a,data);}else{day.acts.push({id:uid(),...data});}
   save();closeSheet();render();
 }
@@ -710,6 +730,41 @@ function saveExp(tid,eid){const t=tget(tid);
   save();closeSheet();render();
 }
 function delExp(tid,eid){const t=tget(tid);t.expenses=t.expenses.filter(e=>e.id!==eid);save();closeSheet();render();}
+
+/* ============ COLOR CUENTA REGRESIVA ============ */
+const CD_GRAYS=["#000000","#1C1C1E","#3A3A3C","#636366","#8E8E93","#AEAEB2","#C7C7CC","#E5E5EA","#F2F2F7","#FFFFFF"];
+const CD_FAMOSOS=[
+  {c:"#0ABAB5",n:"Tiffany"},{c:"#E50914",n:"Netflix"},{c:"#1DB954",n:"Spotify"},
+  {c:"#1877F2",n:"Facebook"},{c:"#FFCC00",n:"McDonald's"},{c:"#25D366",n:"WhatsApp"},
+  {c:"#5856D6",n:"Índigo"},{c:"#FF2D55",n:"Rosa"},{c:"#FF9500",n:"Naranja"},{c:"#34C759",n:"Verde"},
+  {c:"#AF52DE",n:"Morado"},{c:"#8B0000",n:"Vino"}
+];
+function textOn(hex){const h=hex.replace("#","");
+  const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
+  return (0.299*r+0.587*g+0.114*b)>150?"#1A1A2E":"#fff";}
+function cdStyle(t){if(!t.cdColor)return "background:var(--grad);color:#fff";
+  return `background:${t.cdColor};color:${textOn(t.cdColor)};box-shadow:none`;}
+function sheetColor(tid){const t=tget(tid);
+  const sw=(color,sel,onclick,style)=>`<div class="sw ${sel?'on':''}" style="background:${style||color}" onclick="${onclick}"></div>`;
+  const grad=sw("",!t.cdColor,`setCd('${tid}','')`,"var(--grad)");
+  const grays=CD_GRAYS.map(c=>sw(c,t.cdColor===c,`setCd('${tid}','${c}')`)).join("");
+  const fam=CD_FAMOSOS.map(f=>`<div class="sw-fam"><div class="sw ${t.cdColor===f.c?'on':''}" style="background:${f.c}" onclick="setCd('${tid}','${f.c}')"></div><span class="lbl">${f.n}</span></div>`).join("");
+  openSheet(shell("Color del recuadro",`
+    <div class="sw-group-label">Original</div><div class="sw-grid">${grad}</div>
+    <div class="sw-group-label">Escala de grises</div><div class="sw-grid">${grays}</div>
+    <div class="sw-group-label">Colores famosos</div><div class="sw-grid">${fam}</div>
+    <button class="btn ghost" style="margin-top:18px" onclick="closeSheet()">Listo</button>`));
+}
+function setCd(tid,color){tget(tid).cdColor=color||null;save();closeSheet();render();}
+
+/* ============ MAPA (Apple Maps) ============ */
+function mapBlock(addr){
+  if(!addr)return "";
+  const enc=encodeURIComponent(addr);
+  return `<a class="map-embed" href="https://maps.apple.com/?q=${enc}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+    <iframe loading="lazy" src="https://www.google.com/maps?q=${enc}&output=embed"></iframe>
+    <span class="map-open">📍 Abrir en Apple Maps</span></a>`;
+}
 
 /* ============ INIT ============ */
 render();
