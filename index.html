@@ -199,7 +199,7 @@
   @keyframes fade{to{opacity:1}}
   .sheet{position:fixed;left:0;right:0;bottom:0;z-index:70;max-width:520px;margin:0 auto;
     background:var(--surface);border-radius:26px 26px 0 0;box-shadow:var(--shadow-lg);
-    max-height:92dvh;display:flex;flex-direction:column;
+    max-height:100dvh;display:flex;flex-direction:column;
     animation:up .34s cubic-bezier(.22,.61,.36,1)}
   @keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
   .grabber{width:38px;height:5px;border-radius:5px;background:var(--line);margin:10px auto 2px}
@@ -674,7 +674,7 @@ function sheetAddAct(tid,date,aid){
   window._actPdf=a?(a.pdf||null):null;
   window._actPdfName=a?(a.pdfName||null):null;
   const cats=Object.entries(CATS).map(([k,c])=>
-    `<div class="catopt ${window._actCat===k?'on':''}" id="cat-${k}" style="${window._actCat===k?`background:${c.color}`:''}" onclick="pickCat('${k}')">${c.emoji} ${c.lbl}</div>`).join("");
+    `<div class="catopt ${window._actCat===k?'on':''}" id="cat-${k}" style="${window._actCat===k?'background:var(--accent,var(--grad));color:var(--accent-text,#fff)':''}" onclick="pickCat('${k}')">${c.emoji} ${c.lbl}</div>`).join("");
   openSheet(shell(a?"Editar actividad":"Nueva actividad",`
     <div class="two"><div class="field"><label>Hora</label><input id="a-time" type="time" value="${a?a.time:''}"></div>
       <div class="field" style="flex:2"><label>Nombre</label><input id="a-name" value="${a?esc(a.name):''}" placeholder="Senso-ji"></div></div>
@@ -689,7 +689,7 @@ function sheetAddAct(tid,date,aid){
 }
 function pickCat(k){window._actCat=k;
   Object.entries(CATS).forEach(([kk,c])=>{const el=document.getElementById("cat-"+kk);
-    if(!el)return;if(kk===k){el.classList.add("on");el.style.background=c.color;}else{el.classList.remove("on");el.style.background="";}});
+    if(!el)return;if(kk===k){el.classList.add("on");el.style.background="var(--accent,var(--grad))";el.style.color="var(--accent-text,#fff)";}else{el.classList.remove("on");el.style.background="";el.style.color="";}});
   const wrap=document.getElementById("a-pdf-wrap");if(wrap)wrap.innerHTML=pdfFieldHtml();}
 function pdfFieldHtml(){
   const has=!!window._actPdf;
@@ -758,7 +758,7 @@ function delDest(tid,did){if(!confirm("¿Eliminar este destino y sus lugares?"))
 function sheetAddPlace(tid,did,pid){const t=tget(tid);const dest=t.destinos.find(d=>d.id===did);
   const p=pid?dest.places.find(x=>x.id===pid):null;window._placeCat=p?p.cat:"restaurante";
   const cats=Object.entries(PLACE_CATS).map(([k,c])=>
-    `<div class="catopt ${window._placeCat===k?'on':''}" id="pc-${k}" style="${window._placeCat===k?'background:var(--grad)':''}" onclick="pickPCat('${k}')">${c.emoji} ${c.lbl}</div>`).join("");
+    `<div class="catopt ${window._placeCat===k?'on':''}" id="pc-${k}" style="${window._placeCat===k?'background:var(--accent,var(--grad));color:var(--accent-text,#fff)':''}" onclick="pickPCat('${k}')">${c.emoji} ${c.lbl}</div>`).join("");
   openSheet(shell(p?"Editar lugar":"Nuevo lugar",`
     <div class="field"><label>Nombre</label><input id="p-name" value="${p?esc(p.name):''}" placeholder="Ichiran Ramen"></div>
     <div class="field"><label>Tipo</label><div class="catgrid" id="pcgrid">${cats}</div></div>
@@ -767,7 +767,7 @@ function sheetAddPlace(tid,did,pid){const t=tget(tid);const dest=t.destinos.find
     ${p?`<button class="btn danger" style="margin-top:8px" onclick="delPlace('${tid}','${did}','${pid}')">Eliminar</button>`:''}`,accentVars(t)));
 }
 function pickPCat(k){window._placeCat=k;Object.keys(PLACE_CATS).forEach(kk=>{const el=document.getElementById("pc-"+kk);
-  if(!el)return;if(kk===k){el.classList.add("on");el.style.background="var(--grad)";}else{el.classList.remove("on");el.style.background="";}});}
+  if(!el)return;if(kk===k){el.classList.add("on");el.style.background="var(--accent,var(--grad))";el.style.color="var(--accent-text,#fff)";}else{el.classList.remove("on");el.style.background="";el.style.color="";}});}
 function savePlace(tid,did,pid){const t=tget(tid);const dest=t.destinos.find(d=>d.id===did);
   const name=val("p-name");if(!name){toast("Ponle nombre");return;}
   if(pid){const p=dest.places.find(x=>x.id===pid);p.name=name;p.cat=window._placeCat;p.note=val("p-note");}
