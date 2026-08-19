@@ -118,7 +118,7 @@
   .section-h{display:flex;justify-content:space-between;align-items:center;margin:22px 4px 12px}
   .section-h:first-child{margin-top:4px}
   .section-h h2{font-size:19px;font-weight:800;letter-spacing:-.01em}
-  .add-link{color:var(--violet);font-weight:700;font-size:14px}
+  .add-link{color:var(--accent-solid,var(--violet));font-weight:700;font-size:14px}
 
   .card{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
   .stat-row{display:flex;gap:11px;margin-bottom:14px}
@@ -158,7 +158,7 @@
   .day-empty{color:var(--muted);font-size:14px;padding:6px 2px 12px}
   .itin-break{display:flex;align-items:center;gap:10px;margin:24px 2px 2px}
   .itin-break-line{flex:1;height:1px;background:var(--line)}
-  .itin-break-lbl{font-size:12.5px;font-weight:800;color:var(--violet);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+  .itin-break-lbl{font-size:12.5px;font-weight:800;color:var(--accent-solid,var(--violet));text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
   .itin-break:first-child{margin-top:2px}
   .map-embed{display:block;position:relative;height:130px;border-radius:12px;overflow:hidden;margin-top:11px;background:#e9eaf0}
   .map-embed iframe{width:100%;height:100%;border:0;pointer-events:none;display:block}
@@ -176,7 +176,7 @@
   .place .pi{font-size:19px;flex:0 0 26px;text-align:center}
   .place .nm{font-weight:700;font-size:15px}
   .place .no{font-size:13px;color:var(--muted);margin-top:1px}
-  .place-add{width:100%;text-align:left;color:var(--violet);font-weight:700;font-size:14px;padding:11px 0;border-top:1px solid var(--line-2)}
+  .place-add{width:100%;text-align:left;color:var(--accent-solid,var(--violet));font-weight:700;font-size:14px;padding:11px 0;border-top:1px solid var(--line-2)}
 
   /* gastos */
   .balance{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
@@ -212,11 +212,11 @@
   .field label{display:block;font-size:13px;font-weight:700;color:var(--ink-2);margin-bottom:6px}
   .field input,.field textarea,.field select{width:100%;padding:13px 14px;border:1px solid var(--line);
     border-radius:13px;background:var(--input-bg);color:var(--ink);outline:none;transition:border .15s}
-  .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--violet);background:var(--input-bg-focus)}
+  .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent-solid,var(--violet));background:var(--input-bg-focus)}
   .field textarea{resize:none;min-height:70px;line-height:1.45}
   .two{display:flex;gap:11px}.two>*{flex:1}
-  .btn{width:100%;padding:15px;border-radius:15px;background:var(--grad);color:#fff;font-weight:800;font-size:16px;
-    box-shadow:0 8px 22px rgba(108,92,231,.35);margin-top:6px}
+  .btn{width:100%;padding:15px;border-radius:15px;background:var(--accent,var(--grad));color:var(--accent-text,#fff);font-weight:800;font-size:16px;
+    box-shadow:0 8px 22px var(--accent-shadow,rgba(108,92,231,.35));margin-top:6px}
   .btn:active{transform:scale(.98)}
   .btn.ghost{background:var(--bg);color:var(--ink);box-shadow:none;font-weight:700}
   .btn.danger{background:var(--danger-bg);color:var(--danger-text);box-shadow:none}
@@ -225,7 +225,7 @@
   .imgpick.has{border:0}
   .pdfpick{width:100%;padding:16px;border-radius:15px;border:2px dashed var(--line);background:var(--input-bg);
     display:flex;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-weight:600;font-size:14px;text-align:center}
-  .pdfpick.has{border-style:solid;border-color:var(--violet);color:var(--violet);background:rgba(108,92,231,.1)}
+  .pdfpick.has{border-style:solid;border-color:var(--accent-solid,var(--violet));color:var(--accent-solid,var(--violet));background:var(--accent-tint,rgba(108,92,231,.1))}
   .pdf-chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:5px 10px;border-radius:20px;
     margin-top:7px;margin-left:7px;background:var(--line-2);color:var(--ink-2)}
   .pdf-chip:active{opacity:.7}
@@ -236,7 +236,7 @@
   .person-toggle{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--line-2)}
   .person-toggle:first-child{border-top:0}
   .ptcheck{width:24px;height:24px;border-radius:8px;border:2px solid var(--line);flex:0 0 auto;display:grid;place-items:center;color:#fff;font-size:14px;font-weight:900}
-  .ptcheck.on{background:var(--grad);border-color:transparent}
+  .ptcheck.on{background:var(--accent,var(--grad));color:var(--accent-text,#fff);border-color:transparent}
   .ptname{font-weight:700;font-size:15px;flex:1}
   .ptamt{width:96px;padding:9px 10px;border:1px solid var(--line);border-radius:11px;text-align:right;font-weight:700;background:#FBFBFD}
   .split-toggle{display:flex;background:var(--bg);border-radius:12px;padding:4px;margin-bottom:12px}
@@ -245,7 +245,7 @@
   .split-note{font-size:12.5px;color:var(--muted);text-align:center;margin:2px 0 4px}
   .traveler-add{display:flex;gap:9px;margin-bottom:9px}
   .traveler-add input{flex:1}
-  .traveler-add button{flex:0 0 auto;padding:0 16px;border-radius:12px;background:var(--bg);font-weight:800;color:var(--violet)}
+  .traveler-add button{flex:0 0 auto;padding:0 16px;border-radius:12px;background:var(--bg);font-weight:800;color:var(--accent-solid,var(--violet))}
   .tv-chip{display:inline-flex;align-items:center;gap:7px;background:var(--bg);border-radius:20px;padding:7px 8px 7px 12px;font-weight:700;font-size:14px;margin:0 7px 7px 0}
   .tv-chip button{color:var(--muted);font-weight:900;font-size:15px;line-height:1}
   .toast{position:fixed;bottom:calc(90px + var(--safe-b));left:50%;transform:translateX(-50%);
@@ -356,7 +356,7 @@ function homeView(){
   const cards=state.trips.map(t=>{
     const cov=/^linear-gradient|^url/.test(t.cover)?t.cover:`url('${t.cover}')`;
     const bg=t.cover.startsWith("data:")?`url('${t.cover}')`:t.cover;
-    const av=t.travelers.slice(0,4).map(p=>`<div class="av" style="background:${accentOf(t)}">${initials(p.name)}</div>`).join("");
+    const av=t.travelers.slice(0,4).map(p=>`<div class="av" style="background:${accentOf(t)};color:${accentTextOf(t)}">${initials(p.name)}</div>`).join("");
     const route=t.destinos&&t.destinos.length>1?
       `<div class="route">${t.destinos.slice(0,3).map((d,i,a)=>`<span class="city">${esc(d.name)}</span>${i<Math.min(a.length,3)-1?'<span class="path"></span>':''}`).join("")}${t.destinos.length>3?'<span class="city">+'+(t.destinos.length-3)+'</span>':''}</div>`:"";
     return `<div class="trip-card" onclick="openTrip('${t.id}')">
@@ -393,7 +393,7 @@ function tripView(t){
   else if(curTab==="itinerario")pane=paneItinerario(t);
   else if(curTab==="lugares")pane=paneLugares(t);
   else pane=paneGastos(t);
-  return `<div class="screen">
+  return `<div class="screen" style="${accentVars(t)}">
     <div class="t-hero">
       <div class="cover" style="background-image:${bg}"></div><div class="scrim"></div>
       <div class="t-topbar">
@@ -405,7 +405,7 @@ function tripView(t){
         <div class="sub"><span>📍 ${esc(t.destination)}</span><span>·</span><span>${fmtRange(t.start,t.end)}</span></div>
       </div>
     </div>
-    <div class="tabbar" style="--accent:${accentOf(t)}">${tabs}</div>
+    <div class="tabbar">${tabs}</div>
     <div class="scroll"><div class="pane">${pane}</div></div>
   </div>`;
 }
@@ -423,7 +423,7 @@ function paneResumen(t){
   const totals=expenseTotals(t);
   const totalStr=Object.keys(totals).length?Object.entries(totals).map(([c,v])=>money(v,c)).join(" · "):"—";
   const route=(t.destinos||[]).map((d,i,a)=>`<div class="chip">📍 ${esc(d.name)}</div>`).join("");
-  const people=t.travelers.map(p=>`<div class="chip"><span class="av" style="background:${accentOf(t)}">${initials(p.name)}</span>${esc(p.name)}</div>`).join("");
+  const people=t.travelers.map(p=>`<div class="chip"><span class="av" style="background:${accentOf(t)};color:${accentTextOf(t)}">${initials(p.name)}</span>${esc(p.name)}</div>`).join("");
   return `${cdBox}
     <div class="stat-row">
       <div class="stat"><div class="n">${daysBetween(t.start,t.end)}</div><div class="l">Días</div></div>
@@ -495,7 +495,7 @@ function paneLugares(t){
     }
     const subParts=[range,d.note].filter(Boolean).join(" · ");
     return `<div class="dest">
-      <div class="dest-h"><div class="dest-pin" style="background:${accent}">📍</div>
+      <div class="dest-h"><div class="dest-pin" style="background:${accent};color:${accentTextOf(t)}">📍</div>
         <div style="flex:1"><div class="nm">${esc(d.name)}</div>${subParts?`<div class="sub">${esc(subParts)}</div>`:""}</div>
         <button class="icon-btn" style="background:var(--bg);color:var(--muted)" onclick="event.stopPropagation();sheetAddDest('${t.id}','${d.id}')">✎</button>
       </div>
@@ -533,7 +533,7 @@ function paneGastos(t){
     const rows=t.travelers.map(p=>{
       const v=bal[p.id];const cls=Math.abs(v)<0.5?"zero":v>0?"pos":"neg";
       const txt=Math.abs(v)<0.5?"al día":(v>0?"le deben ":"debe ")+money(Math.abs(v),cur);
-      return `<div class="bal-row"><div class="bal-name"><span class="av" style="background:${accent}">${initials(p.name)}</span>${esc(p.name)}</div><div class="bal-amt ${cls}">${txt}</div></div>`;
+      return `<div class="bal-row"><div class="bal-name"><span class="av" style="background:${accent};color:${accentTextOf(t)}">${initials(p.name)}</span>${esc(p.name)}</div><div class="bal-amt ${cls}">${txt}</div></div>`;
     }).join("");
     const settle=settleUp(bal,cur,t);
     const exps=t.expenses.filter(e=>e.cur===cur).map(e=>{
@@ -565,10 +565,10 @@ function settleUp(bal,cur,t){
 
 /* ============ SHEETS ============ */
 let img_tmp=null;
-function openSheet(html){
+function openSheet(html,styleVars){
   closeSheet();
   const ov=document.createElement("div");ov.className="overlay";ov.id="ov";ov.onclick=e=>{if(e.target===ov)closeSheet();};
-  ov.innerHTML=`<div class="sheet">${html}</div>`;
+  ov.innerHTML=`<div class="sheet"${styleVars?` style="${styleVars}"`:""}>${html}</div>`;
   document.body.appendChild(ov);
 }
 function closeSheet(){const o=document.getElementById("ov");if(o)o.remove();img_tmp=null;}
@@ -638,7 +638,7 @@ function sheetTripMenu(id){const t=tget(id);
       <div id="m-tvlist">${t.travelers.map((p,i)=>`<span class="tv-chip">${esc(p.name)} <button onclick="mDelTv('${id}',${i})">×</button></span>`).join("")}</div></div>
     <button class="btn" onclick="saveTripEdit('${id}')">Guardar cambios</button>
     <button class="btn danger" style="margin-top:8px" onclick="delTrip('${id}')">Eliminar viaje</button>
-    <button class="btn ghost" style="margin-top:8px" onclick="closeSheet()">Cerrar</button>`));
+    <button class="btn ghost" style="margin-top:8px" onclick="closeSheet()">Cerrar</button>`,accentVars(t)));
 }
 function saveTripEdit(id){const t=tget(id);
   const name=val("m-name"),start=val("m-start"),end=val("m-end");
@@ -686,7 +686,7 @@ function sheetAddAct(tid,date,aid){
     <div class="field"><label>Notas</label><textarea id="a-notes" placeholder="Llevar efectivo">${a?esc(a.notes):''}</textarea></div>
     <div id="a-pdf-wrap">${pdfFieldHtml()}</div>
     <button class="btn" onclick="saveAct('${tid}','${date}'${aid?`,'${aid}'`:''})">${a?'Guardar':'Agregar'}</button>
-    ${a?`<button class="btn danger" style="margin-top:8px" onclick="delAct('${tid}','${date}','${aid}')">Eliminar</button>`:''}`));
+    ${a?`<button class="btn danger" style="margin-top:8px" onclick="delAct('${tid}','${date}','${aid}')">Eliminar</button>`:''}`,accentVars(t)));
 }
 function pickCat(k){window._actCat=k;
   Object.entries(CATS).forEach(([kk,c])=>{const el=document.getElementById("cat-"+kk);
@@ -744,7 +744,7 @@ function sheetAddDest(tid,did){const t=tget(tid);const d=did?t.destinos.find(x=>
       <div class="field"><label>Hasta</label><input id="d-end" type="date" value="${d&&d.end?d.end:''}" min="${t.start}" max="${t.end}"></div></div>
     <div class="field"><label>Nota (opcional)</label><input id="d-note" value="${d?esc(d.note):''}" placeholder="Vuelo desde Madrid"></div>
     <button class="btn" onclick="saveDest('${tid}'${did?`,'${did}'`:''})">${d?'Guardar':'Agregar destino'}</button>
-    ${d?`<button class="btn danger" style="margin-top:8px" onclick="delDest('${tid}','${did}')">Eliminar destino</button>`:''}`));
+    ${d?`<button class="btn danger" style="margin-top:8px" onclick="delDest('${tid}','${did}')">Eliminar destino</button>`:''}`,accentVars(t)));
 }
 function saveDest(tid,did){const t=tget(tid);const name=val("d-name");if(!name){toast("Ponle nombre");return;}
   const start=val("d-start"),end=val("d-end");
@@ -765,7 +765,7 @@ function sheetAddPlace(tid,did,pid){const t=tget(tid);const dest=t.destinos.find
     <div class="field"><label>Tipo</label><div class="catgrid" id="pcgrid">${cats}</div></div>
     <div class="field"><label>Nota (opcional)</label><input id="p-note" value="${p?esc(p.note):''}" placeholder="Reservar antes"></div>
     <button class="btn" onclick="savePlace('${tid}','${did}'${pid?`,'${pid}'`:''})">${p?'Guardar':'Agregar lugar'}</button>
-    ${p?`<button class="btn danger" style="margin-top:8px" onclick="delPlace('${tid}','${did}','${pid}')">Eliminar</button>`:''}`));
+    ${p?`<button class="btn danger" style="margin-top:8px" onclick="delPlace('${tid}','${did}','${pid}')">Eliminar</button>`:''}`,accentVars(t)));
 }
 function pickPCat(k){window._placeCat=k;Object.keys(PLACE_CATS).forEach(kk=>{const el=document.getElementById("pc-"+kk);
   if(!el)return;if(kk===k){el.classList.add("on");el.style.background="var(--grad)";}else{el.classList.remove("on");el.style.background="";}});}
@@ -795,8 +795,8 @@ function sheetAddExp(tid,eid){const t=tget(tid);const e=eid?t.expenses.find(x=>x
         <button id="sp-custom" class="${window._expMethod==='custom'?'on':''}" onclick="setSplit('${tid}','custom')">Montos por persona</button></div>
       <div class="split-note" id="sp-note"></div>
       <div id="e-people"></div></div>
-    <button class="btn" style="background:${accentOf(t)}" onclick="saveExp('${tid}'${eid?`,'${eid}'`:''})">${e?'Guardar':'Agregar gasto'}</button>
-    ${e?`<button class="btn danger" style="margin-top:8px" onclick="delExp('${tid}','${eid}')">Eliminar</button>`:''}`));
+    <button class="btn" onclick="saveExp('${tid}'${eid?`,'${eid}'`:''})">${e?'Guardar':'Agregar gasto'}</button>
+    ${e?`<button class="btn danger" style="margin-top:8px" onclick="delExp('${tid}','${eid}')">Eliminar</button>`:''}`,accentVars(t)));
   renderExpPeople(tid);
 }
 function setSplit(tid,m){window._expMethod=m;
@@ -846,8 +846,31 @@ const CD_GRAYS=["#000000","#1C1C1E","#3A3A3C","#636366","#8E8E93","#AEAEB2","#C7
 function textOn(hex){const h=hex.replace("#","");
   const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
   return (0.299*r+0.587*g+0.114*b)>150?"#1A1A2E":"#fff";}
-function cdStyle(t){if(!t.cdColor)return "background:var(--grad);color:#fff";
-  return `background:${t.cdColor};color:${textOn(t.cdColor)};box-shadow:none`;}
+function hexToRgb(hex){const h=hex.replace("#","");
+  return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
+function isDarkHex(hex){const [r,g,b]=hexToRgb(hex);return (0.299*r+0.587*g+0.114*b)<=150;}
+/* Genera las variables CSS de acento (fondo, texto legible y sombra) según el
+   color elegido para "días faltantes". Si es oscuro (negros/grises oscuros) la
+   sombra se vuelve blanca; si es claro/color, la sombra toma ese mismo color. */
+function accentVars(t){
+  const c=t.cdColor;
+  if(!c){
+    return `--accent:var(--grad);--accent-solid:var(--violet);--accent-text:#fff;`+
+      `--accent-shadow:rgba(108,92,231,.35);--accent-shadow-lg:rgba(108,92,231,.42);`+
+      `--accent-tint:rgba(108,92,231,.1);`;
+  }
+  const [r,g,b]=hexToRgb(c);
+  const dark=isDarkHex(c);
+  const txt=textOn(c);
+  const shadow=dark?"rgba(255,255,255,.32)":`rgba(${r},${g},${b},.38)`;
+  const shadowLg=dark?"rgba(255,255,255,.4)":`rgba(${r},${g},${b},.46)`;
+  const tint=dark?"rgba(255,255,255,.12)":`rgba(${r},${g},${b},.12)`;
+  return `--accent:${c};--accent-solid:${c};--accent-text:${txt};`+
+    `--accent-shadow:${shadow};--accent-shadow-lg:${shadowLg};--accent-tint:${tint};`;
+}
+function accentTextOf(t){return t.cdColor?textOn(t.cdColor):"#fff";}
+function cdStyle(t){if(!t.cdColor)return "background:var(--grad);color:#fff;box-shadow:0 10px 26px var(--accent-shadow-lg,rgba(108,92,231,.32))";
+  return `background:${t.cdColor};color:${textOn(t.cdColor)};box-shadow:0 10px 26px var(--accent-shadow-lg)`;}
 function setCd(tid,color){tget(tid).cdColor=color||null;save();closeSheet();render();}
 
 /* ============ MAPA (Apple Maps) ============ */
