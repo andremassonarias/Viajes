@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -69,7 +70,7 @@
     box-shadow:var(--shadow);background:#dcdce6;aspect-ratio:16/11;color:#fff;
     transition:transform .18s ease}
   .trip-card:active{transform:scale(.978)}
-  .trip-card .cover{position:absolute;inset:0;background-size:contain;background-repeat:no-repeat;background-position:center}
+  .trip-card .cover{position:absolute;inset:0;background-size:cover;background-repeat:no-repeat;background-position:center}
   .trip-card .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 30%,rgba(0,0,0,.62) 100%)}
   .trip-card .body{position:absolute;left:0;right:0;bottom:0;padding:18px 20px}
   .trip-card .flag{font-size:26px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
@@ -484,7 +485,12 @@ function paneLugares(t){
         <div class="pi">${pc.emoji}</div>
         <div style="flex:1"><div class="nm">${esc(p.name)}</div>${p.note?`<div class="no">${esc(p.note)}</div>`:`<div class="no">${pc.lbl}</div>`}</div></div>`;
     }).join("");
-    const range=d.start&&d.end?fmtRange(d.start,d.end):"";
+    let range="";
+    if(d.start&&d.end){
+      const nights=daysBetween(d.start,d.end)-1;
+      const nightsLbl=nights>0?(nights===1?"1 noche":`${nights} noches`):"";
+      range=[fmtRange(d.start,d.end),nightsLbl].filter(Boolean).join(" · ");
+    }
     const subParts=[range,d.note].filter(Boolean).join(" · ");
     return `<div class="dest">
       <div class="dest-h"><div class="dest-pin">📍</div>
@@ -868,4 +874,3 @@ render();
 </script>
 </body>
 </html>
-
