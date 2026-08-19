@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Viajes">
+<meta name="theme-color" content="#F4F5F7">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="icon" href="data:image/png;base64,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">
+<title>Viajes</title>
+<style>
+  :root{
+    --ink:#1A1A2E; --ink-2:#4A4B63; --muted:#8A8CA0;
+    --bg:#F4F5F7; --surface:#FFFFFF; --line:#E7E8EE; --line-2:#EFF0F4;
+    --violet:#6C5CE7; --coral:#FF7A59; --amber:#FF9F1C;
+    --grad:linear-gradient(135deg,#6C5CE7 0%,#FF7A59 100%);
+    /* category colors */
+    --c-comida:#FF7A59; --c-actividad:#6C5CE7; --c-transporte:#12B7A6;
+    --c-hotel:#3A56E8; --c-vuelo:#3AA9FF; --c-otro:#8A8CA0;
+    --safe-t:env(safe-area-inset-top); --safe-b:env(safe-area-inset-bottom);
+    --tab-h:64px;
+    --shadow:0 6px 24px rgba(26,26,46,.08); --shadow-lg:0 14px 40px rgba(26,26,46,.16);
+    font-size:16px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;overscroll-behavior-y:none;letter-spacing:-.01em}
+  body{overflow:hidden}
+  #app{height:100dvh;width:100%;max-width:520px;margin:0 auto;position:relative;overflow:hidden;background:var(--bg)}
+  .serif{font-family:ui-serif,"New York",Georgia,"Times New Roman",serif}
+  button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+  input,textarea,select{font-family:inherit;font-size:16px}
+  .screen{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);
+    animation:slideIn .32s cubic-bezier(.22,.61,.36,1)}
+  @keyframes slideIn{from{transform:translateX(28px);opacity:0}to{transform:translateX(0);opacity:1}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+  /* ---------- HOME ---------- */
+  .home-head{padding:calc(var(--safe-t) + 18px) 22px 6px;position:relative}
+  .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .home-title{font-size:34px;font-weight:800;letter-spacing:-.022em;margin:2px 0 0}
+  .add-corner{position:absolute;top:calc(var(--safe-t) + 16px);right:20px;width:46px;height:46px;
+    border-radius:50%;background:var(--grad);color:#fff;font-size:27px;line-height:1;
+    box-shadow:0 8px 20px rgba(108,92,231,.42);display:grid;place-items:center}
+  .add-corner:active{transform:scale(.94)}
+  .home-sub{color:var(--ink-2);font-size:15px;margin-top:4px}
+  .trips{padding:14px 18px calc(34px + var(--safe-b))}
+  .trip-card{position:relative;border-radius:24px;overflow:hidden;margin-bottom:16px;
+    box-shadow:var(--shadow);background:#dcdce6;aspect-ratio:16/11;color:#fff;
+    transition:transform .18s ease}
+  .trip-card:active{transform:scale(.978)}
+  .trip-card .cover{position:absolute;inset:0;background-size:cover;background-position:center}
+  .trip-card .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 30%,rgba(0,0,0,.62) 100%)}
+  .trip-card .body{position:absolute;left:0;right:0;bottom:0;padding:18px 20px}
+  .trip-card .flag{font-size:26px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
+  .trip-card h3{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:6px 0 2px;line-height:1.1}
+  .trip-card .meta{display:flex;gap:10px;align-items:center;font-size:13.5px;opacity:.95;flex-wrap:wrap}
+  .trip-card .dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.7)}
+  .route{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:12.5px;font-weight:600}
+  .route .city{background:rgba(255,255,255,.22);backdrop-filter:blur(6px);padding:3px 9px;border-radius:20px}
+  .route .path{flex:0 0 22px;height:1px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.9) 0 3px,transparent 3px 6px);position:relative}
+  .avatars{display:flex;position:absolute;top:16px;right:16px}
+  .av{width:30px;height:30px;border-radius:50%;background:var(--grad);border:2px solid rgba(255,255,255,.85);
+    display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;margin-left:-9px;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+  .empty{padding:60px 30px;text-align:center;color:var(--ink-2)}
+  .empty .big{font-size:46px}
+  .empty h3{font-size:20px;font-weight:800;color:var(--ink);margin:10px 0 4px}
+
+  .fab{position:fixed;bottom:calc(24px + var(--safe-b));left:50%;transform:translateX(-50%);
+    background:var(--grad);color:#fff;font-weight:700;font-size:16px;padding:15px 26px;border-radius:30px;
+    box-shadow:0 10px 28px rgba(108,92,231,.42);display:flex;align-items:center;gap:9px;z-index:40}
+  .fab:active{transform:translateX(-50%) scale(.96)}
+  .fab .plus{font-size:20px;line-height:1;margin-top:-2px}
+
+  /* ---------- TRIP DETAIL ---------- */
+  .t-hero{position:relative;height:230px;flex:0 0 auto;color:#fff;background:#cfd0da}
+  .t-hero .cover{position:absolute;inset:0;background-size:cover;background-position:center}
+  .t-hero .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.34) 0%,rgba(0,0,0,.05) 40%,rgba(0,0,0,.66) 100%)}
+  .t-topbar{position:absolute;top:calc(var(--safe-t) + 8px);left:10px;right:10px;display:flex;justify-content:space-between;z-index:5}
+  .icon-btn{width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.32);backdrop-filter:blur(10px);
+    color:#fff;display:grid;place-items:center;font-size:19px}
+  .icon-btn:active{background:rgba(0,0,0,.5)}
+  .t-hero .htxt{position:absolute;left:20px;right:20px;bottom:16px}
+  .t-hero .flag{font-size:24px}
+  .t-hero h1{font-size:27px;font-weight:800;letter-spacing:-.02em;margin:4px 0 3px}
+  .t-hero .sub{font-size:14px;opacity:.95;display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+
+  .tabbar{flex:0 0 auto;display:flex;background:var(--surface);border-bottom:1px solid var(--line);
+    padding:0 8px;position:sticky;top:0;z-index:10}
+  .tab{flex:1;padding:13px 4px 11px;text-align:center;font-size:13px;font-weight:600;color:var(--muted);
+    position:relative}
+  .tab.on{color:var(--ink)}
+  .tab.on::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+    width:26px;height:3px;border-radius:3px;background:var(--grad)}
+
+  .pane{padding:18px 18px calc(110px + var(--safe-b))}
+  .section-h{display:flex;justify-content:space-between;align-items:center;margin:22px 4px 12px}
+  .section-h:first-child{margin-top:4px}
+  .section-h h2{font-size:19px;font-weight:800;letter-spacing:-.01em}
+  .add-link{color:var(--violet);font-weight:700;font-size:14px}
+
+  .card{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+  .stat-row{display:flex;gap:11px;margin-bottom:14px}
+  .stat{flex:1;background:var(--surface);border-radius:16px;padding:14px;box-shadow:var(--shadow);text-align:center}
+  .stat .n{font-size:22px;font-weight:800;letter-spacing:-.02em}
+  .stat .l{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
+  .countdown{background:var(--grad);color:#fff;border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:0 10px 26px rgba(108,92,231,.32)}
+  .countdown .big{font-size:32px;font-weight:800;letter-spacing:-.02em}
+  .countdown .lbl{font-size:13px;opacity:.92;font-weight:600}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:8px 12px;
+    display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;box-shadow:var(--shadow)}
+  .chip .av{position:static;margin:0;width:24px;height:24px;font-size:10px;border:0}
+
+  /* itinerary */
+  .day{margin-bottom:6px}
+  .day-h{display:flex;align-items:baseline;gap:8px;margin:20px 2px 10px}
+  .day-h .dnum{font-size:15px;font-weight:800;letter-spacing:-.01em}
+  .day-h .ddate{font-size:12.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+  .act{display:flex;gap:12px;background:var(--surface);border-radius:16px;box-shadow:var(--shadow);
+    padding:13px 14px;margin-bottom:10px}
+  .act .time{flex:0 0 46px;font-size:13px;font-weight:800;color:var(--ink);padding-top:2px}
+  .act .bar{flex:0 0 4px;border-radius:4px;align-self:stretch}
+  .act .info{flex:1;min-width:0}
+  .act .nm{font-weight:700;font-size:15.5px}
+  .act .loc{font-size:13px;color:var(--ink-2);margin-top:2px;display:flex;align-items:center;gap:5px}
+  .act .desc{font-size:13px;color:var(--muted);margin-top:5px;line-height:1.4}
+  .catpill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:20px;margin-top:7px}
+  .day-empty{color:var(--muted);font-size:14px;padding:6px 2px 12px}
+
+  /* lugares */
+  .dest{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+  .dest-h{display:flex;align-items:center;gap:12px;padding:15px 16px}
+  .dest-pin{width:40px;height:40px;border-radius:12px;background:var(--grad);color:#fff;display:grid;place-items:center;font-size:19px;flex:0 0 auto}
+  .dest-h .nm{font-weight:800;font-size:17px}
+  .dest-h .sub{font-size:12.5px;color:var(--muted);font-weight:600}
+  .dest-body{padding:0 16px 12px}
+  .place{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line-2)}
+  .place .pi{font-size:19px;flex:0 0 26px;text-align:center}
+  .place .nm{font-weight:700;font-size:15px}
+  .place .no{font-size:13px;color:var(--muted);margin-top:1px}
+  .place-add{width:100%;text-align:left;color:var(--violet);font-weight:700;font-size:14px;padding:11px 0;border-top:1px solid var(--line-2)}
+
+  /* gastos */
+  .balance{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+  .balance h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin:0 0 12px}
+  .bal-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid var(--line-2)}
+  .bal-row:first-of-type{border-top:0}
+  .bal-name{font-weight:700;font-size:15px;display:flex;align-items:center;gap:9px}
+  .bal-amt{font-weight:800;font-size:15px}
+  .pos{color:#12B7A6}.neg{color:#FF5A5F}.zero{color:var(--muted)}
+  .settle{font-size:13px;color:var(--ink-2);padding:7px 0;border-top:1px dashed var(--line);line-height:1.5}
+  .exp{display:flex;gap:13px;align-items:center;background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:14px;margin-bottom:10px}
+  .exp .ei{width:42px;height:42px;border-radius:12px;background:var(--line-2);display:grid;place-items:center;font-size:20px;flex:0 0 auto}
+  .exp .en{font-weight:700;font-size:15px}
+  .exp .em{font-size:12.5px;color:var(--muted);margin-top:1px}
+  .exp .ea{margin-left:auto;text-align:right;font-weight:800;font-size:15px;flex:0 0 auto}
+  .cur-h{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.06em;margin:16px 2px 8px;text-transform:uppercase}
+
+  /* ---------- SHEET / MODAL ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(20,20,35,.42);z-index:60;opacity:0;
+    animation:fade .25s forwards;backdrop-filter:blur(2px)}
+  @keyframes fade{to{opacity:1}}
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:70;max-width:520px;margin:0 auto;
+    background:var(--surface);border-radius:26px 26px 0 0;box-shadow:var(--shadow-lg);
+    max-height:92dvh;display:flex;flex-direction:column;
+    animation:up .34s cubic-bezier(.22,.61,.36,1)}
+  @keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .grabber{width:38px;height:5px;border-radius:5px;background:var(--line);margin:10px auto 2px}
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;padding:8px 20px 10px}
+  .sheet-head h2{font-size:19px;font-weight:800}
+  .sheet-head .x{color:var(--muted);font-size:15px;font-weight:700}
+  .sheet-body{overflow-y:auto;padding:4px 20px calc(20px + var(--safe-b));-webkit-overflow-scrolling:touch}
+  .field{margin-bottom:15px}
+  .field label{display:block;font-size:13px;font-weight:700;color:var(--ink-2);margin-bottom:6px}
+  .field input,.field textarea,.field select{width:100%;padding:13px 14px;border:1px solid var(--line);
+    border-radius:13px;background:#FBFBFD;color:var(--ink);outline:none;transition:border .15s}
+  .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--violet);background:#fff}
+  .field textarea{resize:none;min-height:70px;line-height:1.45}
+  .two{display:flex;gap:11px}.two>*{flex:1}
+  .btn{width:100%;padding:15px;border-radius:15px;background:var(--grad);color:#fff;font-weight:800;font-size:16px;
+    box-shadow:0 8px 22px rgba(108,92,231,.35);margin-top:6px}
+  .btn:active{transform:scale(.98)}
+  .btn.ghost{background:var(--bg);color:var(--ink);box-shadow:none;font-weight:700}
+  .btn.danger{background:#FFF0F0;color:#FF3B30;box-shadow:none}
+  .imgpick{width:100%;height:150px;border-radius:15px;border:2px dashed var(--line);background:#FBFBFD;
+    display:grid;place-items:center;color:var(--muted);font-weight:600;font-size:14px;overflow:hidden;background-size:cover;background-position:center}
+  .imgpick.has{border:0}
+  .catgrid{display:flex;gap:8px;flex-wrap:wrap}
+  .catopt{padding:9px 13px;border-radius:20px;border:1px solid var(--line);font-size:14px;font-weight:700;
+    display:flex;align-items:center;gap:7px;color:var(--ink-2)}
+  .catopt.on{color:#fff;border-color:transparent}
+  .person-toggle{display:flex;align-items:center;gap:10px;padding:11px 0;border-top:1px solid var(--line-2)}
+  .person-toggle:first-child{border-top:0}
+  .ptcheck{width:24px;height:24px;border-radius:8px;border:2px solid var(--line);flex:0 0 auto;display:grid;place-items:center;color:#fff;font-size:14px;font-weight:900}
+  .ptcheck.on{background:var(--grad);border-color:transparent}
+  .ptname{font-weight:700;font-size:15px;flex:1}
+  .ptamt{width:96px;padding:9px 10px;border:1px solid var(--line);border-radius:11px;text-align:right;font-weight:700;background:#FBFBFD}
+  .split-toggle{display:flex;background:var(--bg);border-radius:12px;padding:4px;margin-bottom:12px}
+  .split-toggle button{flex:1;padding:9px;border-radius:9px;font-weight:700;font-size:14px;color:var(--ink-2)}
+  .split-toggle button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+  .split-note{font-size:12.5px;color:var(--muted);text-align:center;margin:2px 0 4px}
+  .traveler-add{display:flex;gap:9px;margin-bottom:9px}
+  .traveler-add input{flex:1}
+  .traveler-add button{flex:0 0 auto;padding:0 16px;border-radius:12px;background:var(--bg);font-weight:800;color:var(--violet)}
+  .tv-chip{display:inline-flex;align-items:center;gap:7px;background:var(--bg);border-radius:20px;padding:7px 8px 7px 12px;font-weight:700;font-size:14px;margin:0 7px 7px 0}
+  .tv-chip button{color:var(--muted);font-weight:900;font-size:15px;line-height:1}
+  .toast{position:fixed;bottom:calc(90px + var(--safe-b));left:50%;transform:translateX(-50%);
+    background:var(--ink);color:#fff;padding:11px 18px;border-radius:22px;font-weight:600;font-size:14px;z-index:90;
+    box-shadow:var(--shadow-lg);animation:up .25s}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+"use strict";
+/* ============ ESTADO / ALMACENAMIENTO ============ */
+const KEY="viajes.v1";
+const CATS={
+  comida:{lbl:"Comida",emoji:"🍽️",color:"var(--c-comida)"},
+  actividad:{lbl:"Actividad",emoji:"🎟️",color:"var(--c-actividad)"},
+  transporte:{lbl:"Transporte",emoji:"🚆",color:"var(--c-transporte)"},
+  hotel:{lbl:"Hotel",emoji:"🏨",color:"var(--c-hotel)"},
+  vuelo:{lbl:"Vuelo",emoji:"✈️",color:"var(--c-vuelo)"},
+  otro:{lbl:"Otro",emoji:"📍",color:"var(--c-otro)"}
+};
+const PLACE_CATS={
+  hotel:{lbl:"Hotel",emoji:"🏨"},restaurante:{lbl:"Restaurante",emoji:"🍽️"},
+  antro:{lbl:"Antro / Bar",emoji:"🍸"},actividad:{lbl:"Actividad",emoji:"🎟️"},
+  cafe:{lbl:"Café",emoji:"☕"},compras:{lbl:"Compras",emoji:"🛍️"},otro:{lbl:"Otro",emoji:"📍"}
+};
+const CURRENCIES=["MXN","EUR","USD","JPY","GBP"];
+const CUR_SYM={MXN:"$",EUR:"€",USD:"US$",JPY:"¥",GBP:"£"};
+const uid=()=>Math.random().toString(36).slice(2,10);
+
+let state=load();
+function load(){
+  try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r);}catch(e){}
+  return seed();
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){toast("No se pudo guardar 😕");}}
+
+function seed(){
+  const t1=id=>({id});
+  const jp=[{id:uid(),name:"Naomy"},{id:uid(),name:"André"},{id:uid(),name:"Juan"},{id:uid(),name:"Carlos"}];
+  const es=[{id:uid(),name:"Naomy"},{id:uid(),name:"Ana"},{id:uid(),name:"Luis"}];
+  return {trips:[
+    {id:uid(),name:"Japón 2026",destination:"Tokio, Japón",flag:"🇯🇵",
+     start:"2026-09-10",end:"2026-09-24",cover:grad("#6C5CE7","#FF7A59"),
+     travelers:jp,
+     destinos:[
+       {id:uid(),name:"Tokio",note:"Llegada · 6 noches",places:[
+         {id:uid(),cat:"hotel",name:"Hotel Shinjuku",note:"Check-in 15:00"},
+         {id:uid(),cat:"restaurante",name:"Ichiran Ramen",note:"Cerca de Shibuya"},
+         {id:uid(),cat:"actividad",name:"Senso-ji",note:"Ir temprano"}]},
+       {id:uid(),name:"Kioto",note:"Tren bala · 3 noches",places:[
+         {id:uid(),cat:"actividad",name:"Fushimi Inari",note:"Los mil toriis"}]}],
+     itinerary:[
+       {id:uid(),date:"2026-09-10",acts:[
+         {id:uid(),time:"09:00",name:"Desayuno",cat:"comida",loc:"Hotel",desc:"",notes:""},
+         {id:uid(),time:"11:00",name:"Senso-ji",cat:"actividad",loc:"Asakusa",desc:"Templo más antiguo de Tokio",notes:""},
+         {id:uid(),time:"14:00",name:"Comida",cat:"comida",loc:"Asakusa",desc:"",notes:""},
+         {id:uid(),time:"16:00",name:"Shibuya",cat:"actividad",loc:"Shibuya Crossing",desc:"",notes:""},
+         {id:uid(),time:"20:00",name:"Cena",cat:"comida",loc:"Shinjuku",desc:"",notes:""}]}],
+     expenses:[
+       {id:uid(),concept:"Hotel Shinjuku",amount:12000,cur:"MXN",paidBy:jp[1].id,
+        split:{method:"equal",who:jp.map(t=>t.id),custom:{}}},
+       {id:uid(),concept:"Ramen",amount:3200,cur:"JPY",paidBy:jp[0].id,
+        split:{method:"equal",who:[jp[0].id,jp[1].id],custom:{}}}]},
+    {id:uid(),name:"España 2026",destination:"Madrid, España",flag:"🇪🇸",
+     start:"2026-10-02",end:"2026-10-15",cover:grad("#3AA9FF","#6C5CE7"),
+     travelers:es,
+     destinos:[
+       {id:uid(),name:"Madrid",note:"Llegada · 5 noches",places:[
+         {id:uid(),cat:"antro",name:"Teatro Kapital",note:"7 pisos"}]},
+       {id:uid(),name:"Berlín",note:"Vuelo desde Madrid · 4 noches",places:[
+         {id:uid(),cat:"hotel",name:"Hotel Mitte",note:""}]}],
+     itinerary:[],expenses:[]}
+  ]};
+}
+function grad(a,b){return `linear-gradient(135deg,${a} 0%,${b} 100%)`;}
+
+/* ============ HELPERS ============ */
+const MESES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+const MESES_L=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const DIAS=["dom","lun","mar","mié","jue","vie","sáb"];
+function parseD(s){const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d);}
+function fmtRange(a,b){const A=parseD(a),B=parseD(b);
+  if(A.getMonth()===B.getMonth())return `${A.getDate()}–${B.getDate()} ${MESES[B.getMonth()]}`;
+  return `${A.getDate()} ${MESES[A.getMonth()]} – ${B.getDate()} ${MESES[B.getMonth()]}`;}
+function daysBetween(a,b){return Math.round((parseD(b)-parseD(a))/864e5)+1;}
+function eachDay(a,b){const out=[];let d=parseD(a),e=parseD(b);
+  while(d<=e){out.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`);d=new Date(d.getTime()+864e5);}return out;}
+function countdown(s){const t=new Date();t.setHours(0,0,0,0);const diff=Math.round((parseD(s)-t)/864e5);return diff;}
+function money(n,cur){const s=CUR_SYM[cur]||"$";
+  return s+" "+Number(n).toLocaleString("es-MX",{minimumFractionDigits:cur==="JPY"?0:0,maximumFractionDigits:0});}
+function initials(n){return n.trim().slice(0,1).toUpperCase();}
+function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function tget(id){return state.trips.find(t=>t.id===id);}
+
+/* ============ ROUTER ============ */
+let route={name:"home"}; let curTab="resumen";
+function go(r){route=r;render();}
+function render(){
+  const app=document.getElementById("app");
+  app.innerHTML = route.name==="home"?homeView():tripView(tget(route.id));
+  app.scrollTop=0;
+}
+
+/* ============ HOME ============ */
+function homeView(){
+  const cards=state.trips.map(t=>{
+    const cov=/^linear-gradient|^url/.test(t.cover)?t.cover:`url('${t.cover}')`;
+    const bg=t.cover.startsWith("data:")?`url('${t.cover}')`:t.cover;
+    const av=t.travelers.slice(0,4).map(p=>`<div class="av">${initials(p.name)}</div>`).join("");
+    const route=t.destinos&&t.destinos.length>1?
+      `<div class="route">${t.destinos.slice(0,3).map((d,i,a)=>`<span class="city">${esc(d.name)}</span>${i<Math.min(a.length,3)-1?'<span class="path"></span>':''}`).join("")}${t.destinos.length>3?'<span class="city">+'+(t.destinos.length-3)+'</span>':''}</div>`:"";
+    return `<div class="trip-card" onclick="openTrip('${t.id}')">
+      <div class="cover" style="background:${bg}"></div><div class="scrim"></div>
+      <div class="avatars">${av}</div>
+      <div class="body">
+        <span class="flag">${t.flag||"🌍"}</span>
+        <h3>${esc(t.name)}</h3>
+        <div class="meta"><span>${esc(t.destination)}</span><span class="dot"></span><span>${fmtRange(t.start,t.end)}</span><span class="dot"></span><span>${t.travelers.length} viajeros</span></div>
+        ${route}
+      </div></div>`;
+  }).join("");
+  const body = state.trips.length?`<div class="trips">${cards}</div>`:
+    `<div class="empty"><div class="big">🧳</div><h3>Aún no tienes viajes</h3><p>Crea tu primer viaje y empieza a planear con tu gente.</p></div>`;
+  return `<div class="screen"><div class="scroll">
+    <div class="home-head">
+      <button class="add-corner" onclick="sheetCreateTrip()">＋</button>
+      <div class="eyebrow">Tus aventuras</div>
+      <h1 class="home-title">Mis viajes</h1>
+      <div class="home-sub">${state.trips.length} viaje${state.trips.length!==1?"s":""} en marcha</div>
+    </div>${body}</div>
+  </div>`;
+}
+function openTrip(id){curTab="resumen";go({name:"trip",id});}
+
+/* ============ TRIP ============ */
+function tripView(t){
+  if(!t)return homeView();
+  const bg=t.cover.startsWith("data:")?`url('${t.cover}')`:t.cover;
+  const tabs=["resumen","itinerario","lugares","gastos"].map(k=>
+    `<div class="tab ${curTab===k?"on":""}" onclick="setTab('${k}')">${k[0].toUpperCase()+k.slice(1)}</div>`).join("");
+  let pane="";
+  if(curTab==="resumen")pane=paneResumen(t);
+  else if(curTab==="itinerario")pane=paneItinerario(t);
+  else if(curTab==="lugares")pane=paneLugares(t);
+  else pane=paneGastos(t);
+  return `<div class="screen">
+    <div class="t-hero">
+      <div class="cover" style="background:${bg}"></div><div class="scrim"></div>
+      <div class="t-topbar">
+        <button class="icon-btn" onclick="go({name:'home'})">‹</button>
+        <button class="icon-btn" onclick="sheetTripMenu('${t.id}')">⋯</button>
+      </div>
+      <div class="htxt"><span class="flag">${t.flag||"🌍"}</span>
+        <h1>${esc(t.name)}</h1>
+        <div class="sub"><span>📍 ${esc(t.destination)}</span><span>·</span><span>${fmtRange(t.start,t.end)}</span></div>
+      </div>
+    </div>
+    <div class="tabbar">${tabs}</div>
+    <div class="scroll"><div class="pane">${pane}</div></div>
+  </div>`;
+}
+function setTab(k){curTab=k;render();}
+
+/* ---- Resumen ---- */
+function paneResumen(t){
+  const cd=countdown(t.start);
+  const cdBox=cd>0?`<div class="countdown"><div class="big">Faltan ${cd} días</div><div class="lbl">para ${esc(t.name)} ✨</div></div>`
+    :cd===0?`<div class="countdown"><div class="big">¡Hoy es el día! 🎉</div><div class="lbl">${esc(t.name)}</div></div>`
+    :`<div class="countdown"><div class="big">En curso</div><div class="lbl">Disfruta ${esc(t.name)}</div></div>`;
+  const nActs=t.itinerary.reduce((s,d)=>s+d.acts.length,0);
+  const totals=expenseTotals(t);
+  const totalStr=Object.keys(totals).length?Object.entries(totals).map(([c,v])=>money(v,c)).join(" · "):"—";
+  const route=(t.destinos||[]).map((d,i,a)=>`<div class="chip">📍 ${esc(d.name)}</div>`).join("");
+  const people=t.travelers.map(p=>`<div class="chip"><span class="av">${initials(p.name)}</span>${esc(p.name)}</div>`).join("");
+  return `${cdBox}
+    <div class="stat-row">
+      <div class="stat"><div class="n">${daysBetween(t.start,t.end)}</div><div class="l">Días</div></div>
+      <div class="stat"><div class="n">${nActs}</div><div class="l">Actividades</div></div>
+      <div class="stat"><div class="n">${(t.destinos||[]).length}</div><div class="l">Destinos</div></div>
+    </div>
+    <div class="section-h"><h2>Gasto total</h2><span class="add-link" onclick="setTab('gastos')">Ver gastos ›</span></div>
+    <div class="card" style="font-size:22px;font-weight:800;letter-spacing:-.02em">${totalStr}</div>
+    ${route?`<div class="section-h"><h2>Ruta</h2></div><div class="chips">${route}</div>`:""}
+    <div class="section-h"><h2>Viajeros</h2><span class="add-link" onclick="sheetTripMenu('${t.id}')">Editar ›</span></div>
+    <div class="chips">${people}</div>`;
+}
+
+/* ---- Itinerario ---- */
+function paneItinerario(t){
+  const days=eachDay(t.start,t.end);
+  const byDate={};t.itinerary.forEach(d=>byDate[d.date]=d);
+  const html=days.map((date,i)=>{
+    const D=parseD(date);
+    const day=byDate[date];
+    const acts=(day?day.acts:[]).slice().sort((a,b)=>(a.time||"").localeCompare(b.time||""));
+    const rows=acts.length?acts.map(a=>{
+      const c=CATS[a.cat]||CATS.otro;
+      return `<div class="act" onclick="sheetAddAct('${t.id}','${date}','${a.id}')">
+        <div class="time">${esc(a.time||"")}</div>
+        <div class="bar" style="background:${c.color}"></div>
+        <div class="info">
+          <div class="nm">${esc(a.name)}</div>
+          ${a.loc?`<div class="loc">📍 ${esc(a.loc)}</div>`:""}
+          ${a.desc?`<div class="desc">${esc(a.desc)}</div>`:""}
+          <span class="catpill" style="background:${c.color}1a;color:${c.color}">${c.emoji} ${c.lbl}</span>
+        </div></div>`;
+    }).join(""):`<div class="day-empty">Sin actividades aún</div>`;
+    return `<div class="day">
+      <div class="day-h"><span class="dnum">Día ${i+1}</span>
+        <span class="ddate">${DIAS[D.getDay()]} ${D.getDate()} ${MESES[D.getMonth()]}</span></div>
+      ${rows}
+      <div class="add-link" style="padding:4px 2px 6px" onclick="sheetAddAct('${t.id}','${date}')">＋ Agregar actividad</div>
+    </div>`;
+  }).join("");
+  return html;
+}
+
+/* ---- Lugares ---- */
+function paneLugares(t){
+  const dests=(t.destinos||[]).map(d=>{
+    const places=d.places.map(p=>{
+      const pc=PLACE_CATS[p.cat]||PLACE_CATS.otro;
+      return `<div class="place" onclick="sheetAddPlace('${t.id}','${d.id}','${p.id}')">
+        <div class="pi">${pc.emoji}</div>
+        <div style="flex:1"><div class="nm">${esc(p.name)}</div>${p.note?`<div class="no">${esc(p.note)}</div>`:`<div class="no">${pc.lbl}</div>`}</div></div>`;
+    }).join("");
+    return `<div class="dest">
+      <div class="dest-h"><div class="dest-pin">📍</div>
+        <div style="flex:1"><div class="nm">${esc(d.name)}</div>${d.note?`<div class="sub">${esc(d.note)}</div>`:""}</div>
+        <button class="icon-btn" style="background:var(--bg);color:var(--muted)" onclick="event.stopPropagation();sheetAddDest('${t.id}','${d.id}')">✎</button>
+      </div>
+      <div class="dest-body">${places}
+        <button class="place-add" onclick="sheetAddPlace('${t.id}','${d.id}')">＋ Agregar lugar</button>
+      </div></div>`;
+  }).join("");
+  return `${dests||`<div class="day-empty" style="padding:20px 2px">Agrega los destinos de este viaje (ej. Madrid, luego Berlín) y guarda hoteles, restaurantes y antros en cada uno.</div>`}
+    <button class="btn ghost" style="margin-top:6px" onclick="sheetAddDest('${t.id}')">＋ Agregar destino</button>`;
+}
+
+/* ---- Gastos ---- */
+function expenseTotals(t){const o={};t.expenses.forEach(e=>{o[e.cur]=(o[e.cur]||0)+Number(e.amount);});return o;}
+function shareOf(e,pid){
+  if(!e.split.who.includes(pid))return 0;
+  if(e.split.method==="custom"){return Number(e.split.custom[pid]||0);}
+  return Number(e.amount)/e.split.who.length;
+}
+function balances(t,cur){
+  const map={};t.travelers.forEach(p=>map[p.id]=0);
+  t.expenses.filter(e=>e.cur===cur).forEach(e=>{
+    if(map[e.paidBy]!==undefined)map[e.paidBy]+=Number(e.amount);
+    e.split.who.forEach(pid=>{if(map[pid]!==undefined)map[pid]-=shareOf(e,pid);});
+  });
+  return map;
+}
+function paneGastos(t){
+  if(!t.expenses.length)return `<div class="day-empty" style="padding:20px 2px">Aún no hay gastos. Agrega el primero y la app calcula cuánto le toca a cada quien.</div>
+    <button class="btn" onclick="sheetAddExp('${t.id}')">＋ Agregar gasto</button>`;
+  const curs=[...new Set(t.expenses.map(e=>e.cur))];
+  let out="";
+  curs.forEach(cur=>{
+    const bal=balances(t,cur);
+    const rows=t.travelers.map(p=>{
+      const v=bal[p.id];const cls=Math.abs(v)<0.5?"zero":v>0?"pos":"neg";
+      const txt=Math.abs(v)<0.5?"al día":(v>0?"le deben ":"debe ")+money(Math.abs(v),cur);
+      return `<div class="bal-row"><div class="bal-name"><span class="av">${initials(p.name)}</span>${esc(p.name)}</div><div class="bal-amt ${cls}">${txt}</div></div>`;
+    }).join("");
+    const settle=settleUp(bal,cur,t);
+    const exps=t.expenses.filter(e=>e.cur===cur).map(e=>{
+      const payer=t.travelers.find(p=>p.id===e.paidBy);
+      const per=e.split.method==="equal"?`entre ${e.split.who.length}`:"montos personalizados";
+      return `<div class="exp" onclick="sheetAddExp('${t.id}','${e.id}')">
+        <div class="ei">🧾</div>
+        <div><div class="en">${esc(e.concept)}</div><div class="em">Pagó ${payer?esc(payer.name):"—"} · ${per}</div></div>
+        <div class="ea">${money(e.amount,cur)}</div></div>`;
+    }).join("");
+    out+=`<div class="cur-h">${CUR_SYM[cur]||cur}</div>
+      <div class="balance"><h3>Quién debe qué</h3>${rows}${settle?`<div style="margin-top:6px">${settle}</div>`:""}</div>
+      ${exps}`;
+  });
+  return out+`<button class="btn" style="margin-top:8px" onclick="sheetAddExp('${t.id}')">＋ Agregar gasto</button>`;
+}
+function settleUp(bal,cur,t){
+  const name=id=>{const p=t.travelers.find(x=>x.id===id);return p?p.name:"?";};
+  let debt=[],cred=[];
+  Object.entries(bal).forEach(([id,v])=>{if(v<-0.5)debt.push([id,-v]);else if(v>0.5)cred.push([id,v]);});
+  let debt2=debt.slice(),cred2=cred.slice(),lines=[];let g=0;
+  while(debt2.length&&cred2.length&&g<20){g++;
+    let[di,dv]=debt2[0],[ci,cv]=cred2[0];const m=Math.min(dv,cv);
+    lines.push(`${esc(name(di))} → ${esc(name(ci))}: <b>${money(m,cur)}</b>`);
+    dv-=m;cv-=m;if(dv<0.5)debt2.shift();else debt2[0][1]=dv;if(cv<0.5)cred2.shift();else cred2[0][1]=cv;
+  }
+  return lines.map(l=>`<div class="settle">${l}</div>`).join("");
+}
+
+/* ============ SHEETS ============ */
+let img_tmp=null;
+function openSheet(html){
+  closeSheet();
+  const ov=document.createElement("div");ov.className="overlay";ov.id="ov";ov.onclick=e=>{if(e.target===ov)closeSheet();};
+  ov.innerHTML=`<div class="sheet">${html}</div>`;
+  document.body.appendChild(ov);
+}
+function closeSheet(){const o=document.getElementById("ov");if(o)o.remove();img_tmp=null;}
+function toast(msg){const el=document.createElement("div");el.className="toast";el.textContent=msg;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1800);}
+function shell(title,body){return `<div class="grabber"></div>
+  <div class="sheet-head"><button class="x" onclick="closeSheet()">Cancelar</button><h2>${title}</h2><span style="width:56px"></span></div>
+  <div class="sheet-body">${body}</div>`;}
+
+/* -- crear/editar viaje -- */
+function sheetCreateTrip(){
+  openSheet(shell("Nuevo viaje",`
+    <div class="field"><label>Nombre del viaje</label><input id="f-name" placeholder="Japón 2026"></div>
+    <div class="field"><label>Destino principal</label><input id="f-dest" placeholder="Tokio, Japón"></div>
+    <div class="field"><label>Emoji / bandera (opcional)</label><input id="f-flag" placeholder="🇯🇵" maxlength="4"></div>
+    <div class="two"><div class="field"><label>Inicio</label><input id="f-start" type="date"></div>
+      <div class="field"><label>Regreso</label><input id="f-end" type="date"></div></div>
+    <div class="field"><label>Imagen de portada (opcional)</label>
+      <div class="imgpick" id="f-imgpick" onclick="document.getElementById('f-img').click()">📷 Subir foto</div>
+      <input id="f-img" type="file" accept="image/*" style="display:none" onchange="pickImg(this,'f-imgpick')"></div>
+    <div class="field"><label>Viajeros</label>
+      <div class="traveler-add"><input id="f-tv" placeholder="Nombre" onkeydown="if(event.key==='Enter')addTv()"><button onclick="addTv()">Agregar</button></div>
+      <div id="f-tvlist"></div></div>
+    <button class="btn" onclick="saveTrip()">Crear viaje</button>`));
+  window._tvs=[{id:uid(),name:"Naomy"}];renderTvs();
+}
+function addTv(){const i=document.getElementById("f-tv");const v=i.value.trim();if(!v)return;
+  window._tvs.push({id:uid(),name:v});i.value="";renderTvs();i.focus();}
+function renderTvs(){document.getElementById("f-tvlist").innerHTML=window._tvs.map((p,idx)=>
+  `<span class="tv-chip">${esc(p.name)} <button onclick="window._tvs.splice(${idx},1);renderTvs()">×</button></span>`).join("");}
+function pickImg(input,target){const f=input.files[0];if(!f)return;
+  const r=new FileReader();r.onload=e=>{img_tmp=e.target.result;
+    const el=document.getElementById(target);el.classList.add("has");el.style.backgroundImage=`url('${img_tmp}')`;el.textContent="";};
+  r.readAsDataURL(f);}
+function saveTrip(){
+  const name=val("f-name"),dest=val("f-dest");
+  const start=val("f-start"),end=val("f-end");
+  if(!name){toast("Ponle nombre al viaje");return;}
+  if(!start||!end){toast("Elige las fechas");return;}
+  if(end<start){toast("El regreso no puede ser antes del inicio");return;}
+  const t={id:uid(),name,destination:dest||name,flag:val("f-flag")||"🌍",start,end,
+    cover:img_tmp||grad("#6C5CE7","#FF7A59"),travelers:window._tvs.length?window._tvs:[{id:uid(),name:"Yo"}],
+    destinos:[],itinerary:[],expenses:[]};
+  state.trips.unshift(t);save();closeSheet();openTrip(t.id);toast("Viaje creado ✨");
+}
+function val(id){const e=document.getElementById(id);return e?e.value.trim():"";}
+
+/* -- menú viaje (editar viajeros / borrar) -- */
+function sheetTripMenu(id){const t=tget(id);
+  openSheet(shell("Ajustes del viaje",`
+    <div class="field"><label>Viajeros</label>
+      <div class="traveler-add"><input id="m-tv" placeholder="Agregar viajero" onkeydown="if(event.key==='Enter')mAddTv('${id}')"><button onclick="mAddTv('${id}')">Agregar</button></div>
+      <div id="m-tvlist">${t.travelers.map((p,i)=>`<span class="tv-chip">${esc(p.name)} <button onclick="mDelTv('${id}',${i})">×</button></span>`).join("")}</div></div>
+    <div class="field"><label>Portada</label>
+      <div class="imgpick has" id="m-imgpick" style="background-image:url('${t.cover.startsWith('data:')?t.cover:''}')" onclick="document.getElementById('m-img').click()">${t.cover.startsWith('data:')?'':'📷 Cambiar foto'}</div>
+      <input id="m-img" type="file" accept="image/*" style="display:none" onchange="mChangeCover('${id}',this)"></div>
+    <button class="btn danger" onclick="delTrip('${id}')">Eliminar viaje</button>
+    <button class="btn ghost" style="margin-top:8px" onclick="closeSheet()">Listo</button>`));
+}
+function mAddTv(id){const t=tget(id);const i=document.getElementById("m-tv");const v=i.value.trim();if(!v)return;
+  t.travelers.push({id:uid(),name:v});save();i.value="";refreshMTv(id);}
+function mDelTv(id,idx){const t=tget(id);t.travelers.splice(idx,1);save();refreshMTv(id);}
+function refreshMTv(id){const t=tget(id);document.getElementById("m-tvlist").innerHTML=
+  t.travelers.map((p,i)=>`<span class="tv-chip">${esc(p.name)} <button onclick="mDelTv('${id}',${i})">×</button></span>`).join("");}
+function mChangeCover(id,input){const f=input.files[0];if(!f)return;const r=new FileReader();
+  r.onload=e=>{tget(id).cover=e.target.result;save();const el=document.getElementById("m-imgpick");
+    el.style.backgroundImage=`url('${e.target.result}')`;el.textContent="";toast("Portada actualizada");};r.readAsDataURL(f);}
+function delTrip(id){if(!confirm("¿Eliminar este viaje? No se puede deshacer."))return;
+  state.trips=state.trips.filter(t=>t.id!==id);save();closeSheet();go({name:"home"});toast("Viaje eliminado");}
+
+/* -- actividad -- */
+function sheetAddAct(tid,date,aid){
+  const t=tget(tid);const day=t.itinerary.find(d=>d.date===date);
+  const a=aid&&day?day.acts.find(x=>x.id===aid):null;
+  window._actCat=a?a.cat:"actividad";
+  const cats=Object.entries(CATS).map(([k,c])=>
+    `<div class="catopt ${window._actCat===k?'on':''}" id="cat-${k}" style="${window._actCat===k?`background:${c.color}`:''}" onclick="pickCat('${k}')">${c.emoji} ${c.lbl}</div>`).join("");
+  openSheet(shell(a?"Editar actividad":"Nueva actividad",`
+    <div class="two"><div class="field"><label>Hora</label><input id="a-time" type="time" value="${a?a.time:''}"></div>
+      <div class="field" style="flex:2"><label>Nombre</label><input id="a-name" value="${a?esc(a.name):''}" placeholder="Senso-ji"></div></div>
+    <div class="field"><label>Categoría</label><div class="catgrid" id="catgrid">${cats}</div></div>
+    <div class="field"><label>Ubicación</label><input id="a-loc" value="${a?esc(a.loc):''}" placeholder="Asakusa, Tokio"></div>
+    <div class="field"><label>Descripción</label><textarea id="a-desc" placeholder="Templo más antiguo de Tokio">${a?esc(a.desc):''}</textarea></div>
+    <div class="field"><label>Notas</label><textarea id="a-notes" placeholder="Llevar efectivo">${a?esc(a.notes):''}</textarea></div>
+    <button class="btn" onclick="saveAct('${tid}','${date}'${aid?`,'${aid}'`:''})">${a?'Guardar':'Agregar'}</button>
+    ${a?`<button class="btn danger" style="margin-top:8px" onclick="delAct('${tid}','${date}','${aid}')">Eliminar</button>`:''}`));
+}
+function pickCat(k){window._actCat=k;
+  Object.entries(CATS).forEach(([kk,c])=>{const el=document.getElementById("cat-"+kk);
+    if(!el)return;if(kk===k){el.classList.add("on");el.style.background=c.color;}else{el.classList.remove("on");el.style.background="";}});}
+function saveAct(tid,date,aid){const t=tget(tid);
+  const name=val("a-name");if(!name){toast("Ponle nombre");return;}
+  let day=t.itinerary.find(d=>d.date===date);if(!day){day={id:uid(),date,acts:[]};t.itinerary.push(day);}
+  const data={time:val("a-time"),name,cat:window._actCat,loc:val("a-loc"),desc:val("a-desc"),notes:val("a-notes")};
+  if(aid){const a=day.acts.find(x=>x.id===aid);Object.assign(a,data);}else{day.acts.push({id:uid(),...data});}
+  save();closeSheet();render();
+}
+function delAct(tid,date,aid){const t=tget(tid);const day=t.itinerary.find(d=>d.date===date);
+  day.acts=day.acts.filter(a=>a.id!==aid);save();closeSheet();render();}
+
+/* -- destino -- */
+function sheetAddDest(tid,did){const t=tget(tid);const d=did?t.destinos.find(x=>x.id===did):null;
+  openSheet(shell(d?"Editar destino":"Nuevo destino",`
+    <div class="field"><label>Ciudad / lugar</label><input id="d-name" value="${d?esc(d.name):''}" placeholder="Berlín"></div>
+    <div class="field"><label>Nota (opcional)</label><input id="d-note" value="${d?esc(d.note):''}" placeholder="Vuelo desde Madrid · 4 noches"></div>
+    <button class="btn" onclick="saveDest('${tid}'${did?`,'${did}'`:''})">${d?'Guardar':'Agregar destino'}</button>
+    ${d?`<button class="btn danger" style="margin-top:8px" onclick="delDest('${tid}','${did}')">Eliminar destino</button>`:''}`));
+}
+function saveDest(tid,did){const t=tget(tid);const name=val("d-name");if(!name){toast("Ponle nombre");return;}
+  if(did){const d=t.destinos.find(x=>x.id===did);d.name=name;d.note=val("d-note");}
+  else{t.destinos.push({id:uid(),name,note:val("d-note"),places:[]});}
+  save();closeSheet();render();}
+function delDest(tid,did){if(!confirm("¿Eliminar este destino y sus lugares?"))return;
+  const t=tget(tid);t.destinos=t.destinos.filter(d=>d.id!==did);save();closeSheet();render();}
+
+/* -- lugar -- */
+function sheetAddPlace(tid,did,pid){const t=tget(tid);const dest=t.destinos.find(d=>d.id===did);
+  const p=pid?dest.places.find(x=>x.id===pid):null;window._placeCat=p?p.cat:"restaurante";
+  const cats=Object.entries(PLACE_CATS).map(([k,c])=>
+    `<div class="catopt ${window._placeCat===k?'on':''}" id="pc-${k}" style="${window._placeCat===k?'background:var(--grad)':''}" onclick="pickPCat('${k}')">${c.emoji} ${c.lbl}</div>`).join("");
+  openSheet(shell(p?"Editar lugar":"Nuevo lugar",`
+    <div class="field"><label>Nombre</label><input id="p-name" value="${p?esc(p.name):''}" placeholder="Ichiran Ramen"></div>
+    <div class="field"><label>Tipo</label><div class="catgrid" id="pcgrid">${cats}</div></div>
+    <div class="field"><label>Nota (opcional)</label><input id="p-note" value="${p?esc(p.note):''}" placeholder="Reservar antes"></div>
+    <button class="btn" onclick="savePlace('${tid}','${did}'${pid?`,'${pid}'`:''})">${p?'Guardar':'Agregar lugar'}</button>
+    ${p?`<button class="btn danger" style="margin-top:8px" onclick="delPlace('${tid}','${did}','${pid}')">Eliminar</button>`:''}`));
+}
+function pickPCat(k){window._placeCat=k;Object.keys(PLACE_CATS).forEach(kk=>{const el=document.getElementById("pc-"+kk);
+  if(!el)return;if(kk===k){el.classList.add("on");el.style.background="var(--grad)";}else{el.classList.remove("on");el.style.background="";}});}
+function savePlace(tid,did,pid){const t=tget(tid);const dest=t.destinos.find(d=>d.id===did);
+  const name=val("p-name");if(!name){toast("Ponle nombre");return;}
+  if(pid){const p=dest.places.find(x=>x.id===pid);p.name=name;p.cat=window._placeCat;p.note=val("p-note");}
+  else{dest.places.push({id:uid(),name,cat:window._placeCat,note:val("p-note")});}
+  save();closeSheet();render();}
+function delPlace(tid,did,pid){const t=tget(tid);const dest=t.destinos.find(d=>d.id===did);
+  dest.places=dest.places.filter(p=>p.id!==pid);save();closeSheet();render();}
+
+/* -- gasto -- */
+function sheetAddExp(tid,eid){const t=tget(tid);const e=eid?t.expenses.find(x=>x.id===eid):null;
+  window._expWho=e?e.split.who.slice():t.travelers.map(p=>p.id);
+  window._expMethod=e?e.split.method:"equal";
+  window._expCustom=e?Object.assign({},e.split.custom):{};
+  window._expPaidBy=e?e.paidBy:t.travelers[0].id;
+  const opts=t.travelers.map(p=>`<option value="${p.id}" ${window._expPaidBy===p.id?'selected':''}>${esc(p.name)}</option>`).join("");
+  const curOpts=CURRENCIES.map(c=>`<option value="${c}" ${e&&e.cur===c?'selected':(!e&&c==='MXN'?'selected':'')}>${CUR_SYM[c]||c} · ${c}</option>`).join("");
+  openSheet(shell(e?"Editar gasto":"Nuevo gasto",`
+    <div class="field"><label>Concepto</label><input id="e-concept" value="${e?esc(e.concept):''}" placeholder="Hotel"></div>
+    <div class="two"><div class="field" style="flex:2"><label>Importe</label><input id="e-amount" type="number" inputmode="decimal" value="${e?e.amount:''}" placeholder="12000" oninput="updSplitUI('${tid}')"></div>
+      <div class="field"><label>Moneda</label><select id="e-cur">${curOpts}</select></div></div>
+    <div class="field"><label>Pagó</label><select id="e-paid">${opts}</select></div>
+    <div class="field"><label>¿Cómo se divide?</label>
+      <div class="split-toggle"><button id="sp-equal" class="${window._expMethod==='equal'?'on':''}" onclick="setSplit('${tid}','equal')">Partes iguales</button>
+        <button id="sp-custom" class="${window._expMethod==='custom'?'on':''}" onclick="setSplit('${tid}','custom')">Montos por persona</button></div>
+      <div class="split-note" id="sp-note"></div>
+      <div id="e-people"></div></div>
+    <button class="btn" onclick="saveExp('${tid}'${eid?`,'${eid}'`:''})">${e?'Guardar':'Agregar gasto'}</button>
+    ${e?`<button class="btn danger" style="margin-top:8px" onclick="delExp('${tid}','${eid}')">Eliminar</button>`:''}`));
+  renderExpPeople(tid);
+}
+function setSplit(tid,m){window._expMethod=m;
+  document.getElementById("sp-equal").classList.toggle("on",m==="equal");
+  document.getElementById("sp-custom").classList.toggle("on",m==="custom");renderExpPeople(tid);}
+function toggleWho(pid){const i=window._expWho.indexOf(pid);if(i>=0)window._expWho.splice(i,1);else window._expWho.push(pid);
+  renderExpPeople(window._curExpTid);}
+function updSplitUI(tid){renderExpPeople(tid);}
+function renderExpPeople(tid){window._curExpTid=tid;const t=tget(tid);
+  const amount=Number(val("e-amount"))||0;const eq=window._expMethod==="equal";
+  const perEqual=window._expWho.length?amount/window._expWho.length:0;
+  const rows=t.travelers.map(p=>{
+    const on=window._expWho.includes(p.id);
+    let right="";
+    if(on&&eq)right=`<span style="font-weight:800;color:var(--ink-2)">${money(perEqual,val('e-cur')||'MXN')}</span>`;
+    else if(on&&!eq)right=`<input class="ptamt" type="number" inputmode="decimal" value="${window._expCustom[p.id]||''}" placeholder="0" oninput="window._expCustom['${p.id}']=this.value;sumCustom()">`;
+    return `<div class="person-toggle">
+      <div class="ptcheck ${on?'on':''}" onclick="toggleWho('${p.id}')">${on?'✓':''}</div>
+      <div class="ptname">${esc(p.name)}</div>${right}</div>`;
+  }).join("");
+  document.getElementById("e-people").innerHTML=rows;
+  const note=document.getElementById("sp-note");
+  if(eq)note.textContent=window._expWho.length?`${money(perEqual,val('e-cur')||'MXN')} por persona · ${window._expWho.length} participantes`:"Selecciona quién participa";
+  else sumCustom();
+}
+function sumCustom(){const note=document.getElementById("sp-note");if(!note)return;
+  const total=Number(val("e-amount"))||0;let s=0;window._expWho.forEach(pid=>s+=Number(window._expCustom[pid]||0));
+  const cur=val("e-cur")||"MXN";const diff=total-s;
+  note.innerHTML=Math.abs(diff)<0.5?`Cuadra ✓ (${money(total,cur)})`:
+    `Suma ${money(s,cur)} de ${money(total,cur)} · faltan <b>${money(diff,cur)}</b>`;
+}
+function saveExp(tid,eid){const t=tget(tid);
+  const concept=val("e-concept");const amount=Number(val("e-amount"));
+  if(!concept){toast("Ponle concepto");return;}
+  if(!amount||amount<=0){toast("Pon un importe válido");return;}
+  if(!window._expWho.length){toast("Elige quién participa");return;}
+  const paidBy=document.getElementById("e-paid").value;const cur=val("e-cur")||"MXN";
+  const custom={};if(window._expMethod==="custom")window._expWho.forEach(pid=>custom[pid]=Number(window._expCustom[pid]||0));
+  const data={concept,amount,cur,paidBy,split:{method:window._expMethod,who:window._expWho.slice(),custom}};
+  if(eid){const e=t.expenses.find(x=>x.id===eid);Object.assign(e,data);}else{t.expenses.push({id:uid(),...data});}
+  save();closeSheet();render();
+}
+function delExp(tid,eid){const t=tget(tid);t.expenses=t.expenses.filter(e=>e.id!==eid);save();closeSheet();render();}
+
+/* ============ INIT ============ */
+render();
+</script>
+</body>
+</html>
