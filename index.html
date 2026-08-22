@@ -259,6 +259,7 @@
 </style>
 </head>
 <body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <div id="app"></div>
 
 <script>
@@ -290,7 +291,94 @@ function load(){
   try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r);}catch(e){}
   return seed();
 }
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){toast("No se pudo guardar 😕");}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){toast("No se pudo guardar 😕");}
+  pushAllTrips();}
+
+/* ============ SUPABASE (nube / familia) ============ */
+const SB_URL="https://ulyumonxaqftmacdfizp.supabase.co";
+const SB_KEY="sb_publishable_31h40cYAIO1sKHaCs4asRw_cnOFu6n_";
+const sb=(window.supabase&&SB_URL&&SB_KEY)?window.supabase.createClient(SB_URL,SB_KEY):null;
+let myUid=null,myName=null,cloudReady=false;
+
+async function cloudInit(){
+  if(!sb)return;
+  try{
+    let {data:{session}}=await sb.auth.getSession();
+    if(!session){const r=await sb.auth.signInAnonymously();session=r.data.session;}
+    myUid=session.user.id;
+    const {data:prof}=await sb.from("profiles").select("name").eq("id",myUid).maybeSingle();
+    myName=prof?prof.name:localStorage.getItem("viajes.name");
+    if(!myName){myName=await askName();}
+    if(myName){await sb.from("profiles").upsert({id:myUid,name:myName});localStorage.setItem("viajes.name",myName);}
+    cloudReady=true;
+    await handleInviteFromUrl();
+    await pullTrips();
+  }catch(e){console.warn("cloud init falló",e);}
+}
+function askName(){
+  return new Promise(res=>{
+    openSheet(shell("¿Cómo te llamas?",`
+      <p style="font-size:14px;color:var(--ink-2);margin:-6px 0 14px">Así te van a ver los demás en los viajes que compartan contigo.</p>
+      <div class="field"><input id="my-name" placeholder="Tu nombre"></div>
+      <button class="btn" id="my-name-btn">Continuar</button>`));
+    document.getElementById("my-name-btn").onclick=()=>{
+      const v=val("my-name");if(!v)return;closeSheet();res(v);
+    };
+  });
+}
+async function pullTrips(){
+  if(!cloudReady)return;
+  try{
+    const {data,error}=await sb.from("trips").select("id,owner_id,data").order("created_at",{ascending:false});
+    if(error)throw error;
+    if(data&&data.length===0&&state.trips.length>0){
+      // primera vez: sube lo que ya tenías localmente en vez de borrarlo
+      pushAllTrips();return;
+    }
+    if(data){
+      state.trips=data.map(row=>({...row.data,id:row.id,_ownerId:row.owner_id,_isOwner:row.owner_id===myUid}));
+      save_local_only();render();
+    }
+  }catch(e){console.warn("pullTrips falló",e);}
+}
+function save_local_only(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+let _pushTimer=null;
+function pushAllTrips(){
+  if(!cloudReady)return;
+  clearTimeout(_pushTimer);
+  _pushTimer=setTimeout(async()=>{
+    for(const t of state.trips){
+      if(t._isOwner===false)continue; // los invitados también pueden editar: se permite igual, RLS decide
+      const {_ownerId,_isOwner,...clean}=t;
+      try{
+        await sb.from("trips").upsert({id:t.id,owner_id:t._ownerId||myUid,data:clean,updated_at:new Date().toISOString()});
+      }catch(e){console.warn("no se pudo sincronizar el viaje",t.id,e);}
+    }
+  },600);
+}
+async function shareTrip(tripId){
+  if(!cloudReady){toast("Conéctate a internet para compartir");return;}
+  try{
+    const {data,error}=await sb.from("trip_invites").insert({trip_id:tripId,created_by:myUid}).select("token").single();
+    if(error)throw error;
+    const link=location.href.split("?")[0]+"?invite="+data.token;
+    if(navigator.share){navigator.share({title:"Únete al viaje",url:link}).catch(()=>{});}
+    else{navigator.clipboard?.writeText(link);toast("Link copiado 🔗");}
+  }catch(e){toast("No se pudo crear el link 😕");}
+}
+async function handleInviteFromUrl(){
+  const params=new URLSearchParams(location.search);
+  const token=params.get("invite");
+  if(!token)return;
+  try{
+    const {data,error}=await sb.rpc("redeem_invite",{invite_token:token,display_name:myName});
+    if(error)throw error;
+    history.replaceState({},"","."+location.pathname.split("/").pop());
+    toast("¡Te uniste al viaje! 🎉");
+  }catch(e){toast("Ese link de invitación ya no es válido");}
+}
+cloudInit();
+
 
 function seed(){
   const t1=id=>({id});
@@ -646,6 +734,7 @@ function sheetTripMenu(id){const t=tget(id);
       <div class="traveler-add"><input id="m-tv" placeholder="Agregar viajero" onkeydown="if(event.key==='Enter')mAddTv('${id}')"><button onclick="mAddTv('${id}')">Agregar</button></div>
       <div id="m-tvlist">${t.travelers.map((p,i)=>`<span class="tv-chip">${esc(p.name)} <button onclick="mDelTv('${id}',${i})">×</button></span>`).join("")}</div></div>
     <button class="btn" onclick="saveTripEdit('${id}')">Guardar cambios</button>
+    <button class="btn ghost" style="margin-top:8px" onclick="shareTrip('${id}')">🔗 Compartir con familia</button>
     <button class="btn danger" style="margin-top:8px" onclick="delTrip('${id}')">Eliminar viaje</button>
     <button class="btn ghost" style="margin-top:8px" onclick="closeSheet()">Cerrar</button>`,accentVars(t)));
 }
@@ -666,7 +755,8 @@ function mChangeCover(id,input){const f=input.files[0];if(!f)return;const r=new 
   r.onload=e=>{tget(id).cover=e.target.result;save();const el=document.getElementById("m-imgpick");
     el.style.backgroundImage=`url('${e.target.result}')`;el.textContent="";toast("Portada actualizada");};r.readAsDataURL(f);}
 function delTrip(id){if(!confirm("¿Eliminar este viaje? No se puede deshacer."))return;
-  state.trips=state.trips.filter(t=>t.id!==id);save();closeSheet();go({name:"home"});toast("Viaje eliminado");}
+  state.trips=state.trips.filter(t=>t.id!==id);save();closeSheet();go({name:"home"});toast("Viaje eliminado");
+  if(cloudReady)sb.from("trips").delete().eq("id",id).then(()=>{}).catch(()=>{});}
 
 /* -- personalizar colores de categoría -- */
 function sheetCatColors(){
