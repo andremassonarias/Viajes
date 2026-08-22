@@ -356,8 +356,12 @@ async function flushPush(){
   for(const t of state.trips){
     const {_ownerId,_isOwner,...clean}=t;
     try{
-      await sb.from("trips").upsert({id:t.id,owner_id:t._ownerId||myUid,data:clean,updated_at:new Date().toISOString()});
-    }catch(e){console.warn("no se pudo sincronizar el viaje",t.id,e);}
+      const {error}=await sb.from("trips").upsert({id:t.id,owner_id:t._ownerId||myUid,data:clean,updated_at:new Date().toISOString()});
+      if(error)throw error;
+    }catch(e){
+      console.warn("no se pudo sincronizar el viaje",t.id,e);
+      toast("No se sincronizó \""+t.name+"\": "+(e.message||e.code||"error desconocido"));
+    }
   }
 }
 function pushAllTrips(){
