@@ -326,6 +326,8 @@ async function cloudInit(){
     myName=prof?prof.name:localStorage.getItem("viajes.name");
     if(!myName){myName=await askName();}
     if(myName){await sb.from("profiles").upsert({id:myUid,name:myName});localStorage.setItem("viajes.name",myName);}
+    state.trips.forEach(t=>{if(t.travelers&&t.travelers.length===1&&t.travelers[0].name==="Yo")t.travelers[0].name=myName;});
+    save_local_only();
     cloudReady=true;
     await handleInviteFromUrl();
     await pullTrips();
@@ -446,32 +448,8 @@ cloudInit();
 
 
 function seed(){
-  const t1=id=>({id});
-  const jp=[{id:uid(),name:"Naomy"},{id:uid(),name:"André"},{id:uid(),name:"Juan"},{id:uid(),name:"Carlos"}];
-  const es=[{id:uid(),name:"Naomy"},{id:uid(),name:"Ana"},{id:uid(),name:"Luis"}];
+  const es=[{id:uid(),name:"Yo"}];
   return {trips:[
-    {id:uid(),name:"Japón 2026",destination:"Tokio, Japón",flag:"🇯🇵",
-     start:"2026-09-10",end:"2026-09-24",cover:grad("#6C5CE7","#FF7A59"),
-     travelers:jp,
-     destinos:[
-       {id:uid(),name:"Tokio",note:"Llegada",start:"2026-09-10",end:"2026-09-15",places:[
-         {id:uid(),cat:"hotel",name:"Hotel Shinjuku",note:"Check-in 15:00"},
-         {id:uid(),cat:"restaurante",name:"Ichiran Ramen",note:"Cerca de Shibuya"},
-         {id:uid(),cat:"actividad",name:"Senso-ji",note:"Ir temprano"}]},
-       {id:uid(),name:"Kioto",note:"Tren bala",start:"2026-09-16",end:"2026-09-18",places:[
-         {id:uid(),cat:"actividad",name:"Fushimi Inari",note:"Los mil toriis"}]}],
-     itinerary:[
-       {id:uid(),date:"2026-09-10",acts:[
-         {id:uid(),time:"09:00",name:"Desayuno",cat:"comida",loc:"Hotel",desc:"",notes:""},
-         {id:uid(),time:"11:00",name:"Senso-ji",cat:"actividad",loc:"Asakusa",desc:"Templo más antiguo de Tokio",notes:""},
-         {id:uid(),time:"14:00",name:"Comida",cat:"comida",loc:"Asakusa",desc:"",notes:""},
-         {id:uid(),time:"16:00",name:"Shibuya",cat:"actividad",loc:"Shibuya Crossing",desc:"",notes:""},
-         {id:uid(),time:"20:00",name:"Cena",cat:"comida",loc:"Shinjuku",desc:"",notes:""}]}],
-     expenses:[
-       {id:uid(),concept:"Hotel Shinjuku",amount:12000,cur:"MXN",paidBy:jp[1].id,
-        split:{method:"equal",who:jp.map(t=>t.id),custom:{}}},
-       {id:uid(),concept:"Ramen",amount:3200,cur:"JPY",paidBy:jp[0].id,
-        split:{method:"equal",who:[jp[0].id,jp[1].id],custom:{}}}]},
     {id:uid(),name:"España 2026",destination:"Madrid, España",flag:"🇪🇸",
      start:"2026-10-02",end:"2026-10-15",cover:grad("#3AA9FF","#6C5CE7"),
      travelers:es,
