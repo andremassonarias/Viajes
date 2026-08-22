@@ -825,13 +825,13 @@ function sheetTripMenu(id){const t=tget(id);
       <div class="switch ${t.allowEdit!==false?'on':''}" id="m-allowedit"></div>
     </div>
     <button class="btn" onclick="saveTripEdit('${id}')">Guardar cambios</button>
-    <button class="btn ghost" style="margin-top:8px" onclick="shareTrip('${id}')">🔗 Compartir con familia</button>
-    <button class="btn danger" style="margin-top:8px" onclick="delTrip('${id}')">Eliminar viaje</button>
-    <button class="btn ghost" style="margin-top:8px" onclick="closeSheet()">Cerrar</button>`,accentVars(t)));
+    <button class="btn ghost" style="margin-top:8px" onclick="shareTrip('${id}')">🔗 Compartir</button>
+    <button class="btn danger" style="margin-top:8px" onclick="delTrip('${id}')">Eliminar viaje</button>`,accentVars(t)));
 }
-function toggleAllowEditM(id){const t=tget(id);t._pendingAllowEdit=!(t._pendingAllowEdit!==undefined?t._pendingAllowEdit:t.allowEdit!==false);
-  const sw=document.getElementById("m-allowedit");sw.classList.toggle("on",t._pendingAllowEdit);
-  document.getElementById("m-allowedit-st").textContent=t._pendingAllowEdit?"Los invitados pueden agregar y cambiar cosas":"Los invitados solo pueden ver el viaje";
+function toggleAllowEditM(id){const t=tget(id);t.allowEdit=!(t.allowEdit!==false);
+  save();
+  const sw=document.getElementById("m-allowedit");sw.classList.toggle("on",t.allowEdit);
+  document.getElementById("m-allowedit-st").textContent=t.allowEdit?"Los invitados pueden agregar y cambiar cosas":"Los invitados solo pueden ver el viaje";
 }
 function saveTripEdit(id){const t=tget(id);
   const name=val("m-name"),start=val("m-start"),end=val("m-end");
