@@ -72,6 +72,10 @@
     border-radius:50%;background:var(--surface);color:var(--ink);font-size:16px;line-height:1;
     box-shadow:var(--shadow);display:grid;place-items:center}
   .profile-corner:active{transform:scale(.94);background:var(--line-2)}
+  .join-corner{position:absolute;top:calc(var(--safe-t) + 16px);right:158px;width:38px;height:38px;
+    border-radius:50%;background:var(--surface);color:var(--ink);font-size:16px;line-height:1;
+    box-shadow:var(--shadow);display:grid;place-items:center}
+  .join-corner:active{transform:scale(.94);background:var(--line-2)}
   .home-sub{color:var(--ink-2);font-size:15px;margin-top:4px}
   .trips{padding:14px 18px calc(34px + var(--safe-b))}
   .trip-card{position:relative;border-radius:24px;overflow:hidden;margin-bottom:16px;
@@ -396,21 +400,47 @@ async function shareTrip(tripId){
     if(upErr)throw upErr;
     const {data,error}=await sb.from("trip_invites").insert({trip_id:tripId,created_by:myUid}).select("token").single();
     if(error)throw error;
-    const link=location.href.split("?")[0]+"?invite="+data.token;
-    if(navigator.share){navigator.share({title:"Únete al viaje",url:link}).catch(()=>{});}
-    else{navigator.clipboard?.writeText(link);toast("Link copiado 🔗");}
-  }catch(e){console.error("shareTrip error:",e);toast("No se pudo crear el link: "+(e.message||e.code||"error desconocido"));}
+    showInviteCode(data.token);
+  }catch(e){console.error("shareTrip error:",e);toast("No se pudo crear el código: "+(e.message||e.code||"error desconocido"));}
+}
+function showInviteCode(code){
+  openSheet(shell("Código para unirse",`
+    <p style="font-size:14px;color:var(--ink-2);margin:-6px 0 14px">Compártele este código a quien quieras invitar. Lo tiene que escribir en el botón 🔗 "Unirme con link" de su app.</p>
+    <div style="font-size:34px;font-weight:800;letter-spacing:.15em;text-align:center;padding:22px 0;background:var(--surface);border-radius:16px;margin-bottom:14px">${code}</div>
+    <button class="btn" id="copy-code-btn">Copiar código</button>`));
+  document.getElementById("copy-code-btn").onclick=()=>{
+    navigator.clipboard?.writeText(code);toast("Código copiado 🔗");
+  };
 }
 async function handleInviteFromUrl(){
   const params=new URLSearchParams(location.search);
   const token=params.get("invite");
   if(!token)return;
+  await redeemToken(token);
+  history.replaceState({},"","."+location.pathname.split("/").pop());
+}
+async function redeemToken(token){
+  if(!token)return false;
   try{
     const {data,error}=await sb.rpc("redeem_invite",{invite_token:token,display_name:myName});
     if(error)throw error;
-    history.replaceState({},"","."+location.pathname.split("/").pop());
     toast("¡Te uniste al viaje! 🎉");
-  }catch(e){toast("Ese link de invitación ya no es válido");}
+    return true;
+  }catch(e){toast("Ese link de invitación ya no es válido");return false;}
+}
+function sheetJoinByLink(){
+  openSheet(shell("Unirme a un viaje",`
+    <p style="font-size:14px;color:var(--ink-2);margin:-6px 0 14px">Escribe el código de 6 caracteres que te compartieron (o pega el link, también funciona).</p>
+    <div class="field"><input id="join-link" placeholder="Ej. 7K4RXQ" style="text-transform:uppercase;letter-spacing:.1em;font-weight:700;text-align:center"></div>
+    <button class="btn" id="join-link-btn">Unirme</button>`));
+  document.getElementById("join-link-btn").onclick=async()=>{
+    const v=val("join-link");if(!v)return;
+    if(!cloudReady){toast("Conéctate a internet primero");return;}
+    let token=v;
+    try{const u=new URL(v);token=u.searchParams.get("invite")||v;}catch(e){}
+    const ok=await redeemToken(token.trim().toUpperCase());
+    if(ok){closeSheet();await pullTrips();}
+  };
 }
 cloudInit();
 
@@ -507,6 +537,7 @@ function homeView(){
       <button class="add-corner" onclick="sheetCreateTrip()">＋</button>
       <button class="settings-corner" onclick="sheetCatColors()">🎨</button>
       <button class="profile-corner" onclick="sheetMyProfile()">👤</button>
+      <button class="join-corner" onclick="sheetJoinByLink()">🔗</button>
       <div class="eyebrow">Tus aventuras</div>
       <h1 class="home-title">Mis viajes</h1>
       <div class="home-sub">${state.trips.length} viaje${state.trips.length!==1?"s":""} en marcha</div>
