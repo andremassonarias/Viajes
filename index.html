@@ -341,7 +341,7 @@ async function pullTrips(){
     if(error)throw error;
     if(data&&data.length===0&&state.trips.length>0){
       // primera vez: sube lo que ya tenías localmente en vez de borrarlo
-      pushAllTrips();return;
+      await flushPush();return;
     }
     if(data){
       state.trips=data.map(row=>({...row.data,id:row.id,_ownerId:row.owner_id,_isOwner:row.owner_id===myUid}));
@@ -351,18 +351,22 @@ async function pullTrips(){
 }
 function save_local_only(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 let _pushTimer=null;
+async function flushPush(){
+  if(!cloudReady)return;
+  for(const t of state.trips){
+    const {_ownerId,_isOwner,...clean}=t;
+    try{
+      await sb.from("trips").upsert({id:t.id,owner_id:t._ownerId||myUid,data:clean,updated_at:new Date().toISOString()});
+    }catch(e){console.warn("no se pudo sincronizar el viaje",t.id,e);}
+  }
+}
 function pushAllTrips(){
   if(!cloudReady)return;
   clearTimeout(_pushTimer);
-  _pushTimer=setTimeout(async()=>{
-    for(const t of state.trips){
-      const {_ownerId,_isOwner,...clean}=t;
-      try{
-        await sb.from("trips").upsert({id:t.id,owner_id:t._ownerId||myUid,data:clean,updated_at:new Date().toISOString()});
-      }catch(e){console.warn("no se pudo sincronizar el viaje",t.id,e);}
-    }
-  },600);
+  _pushTimer=setTimeout(flushPush,300);
 }
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"){clearTimeout(_pushTimer);flushPush();}});
+window.addEventListener("pagehide",()=>{clearTimeout(_pushTimer);flushPush();});
 async function shareTrip(tripId){
   if(!cloudReady){toast("Conéctate a internet para compartir");return;}
   try{
