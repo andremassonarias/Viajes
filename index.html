@@ -621,7 +621,7 @@ function paneItinerario(t){
           ${a.loc?`<div class="loc">📍 ${esc(a.loc)}</div>`:""}
           ${a.desc?`<div class="desc">${esc(a.desc)}</div>`:""}
           <span class="catpill" style="background:${cc}1a;color:${cc}">${c.emoji} ${c.lbl}</span>
-          ${a.pdf?`<button class="pdf-chip" onclick="event.stopPropagation();viewPdf('${t.id}','${date}','${a.id}')">📄 Ver documento</button>`:""}
+          ${(a.pdf||a.pdfPath)?`<button class="pdf-chip" onclick="event.stopPropagation();viewPdf('${t.id}','${date}','${a.id}')">📄 Ver documento</button>`:""}
           ${mapBlock(a.addr)}
         </div></div>`;
     }).join(""):`<div class="day-empty">Sin actividades aún</div>`;
