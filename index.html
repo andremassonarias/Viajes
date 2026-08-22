@@ -852,7 +852,13 @@ function mChangeCover(id,input){const f=input.files[0];if(!f)return;const r=new 
     el.style.backgroundImage=`url('${e.target.result}')`;el.textContent="";toast("Portada actualizada");};r.readAsDataURL(f);}
 function delTrip(id){if(!confirm("¿Eliminar este viaje? No se puede deshacer."))return;
   state.trips=state.trips.filter(t=>t.id!==id);save();closeSheet();go({name:"home"});toast("Viaje eliminado");
-  if(cloudReady)sb.from("trips").delete().eq("id",id).then(()=>{}).catch(()=>{});}
+  if(cloudReady){
+    sb.from("trips").delete().eq("id",id).then(()=>{}).catch(()=>{});
+    sb.storage.from("trip-pdfs").list(id).then(({data})=>{
+      if(data&&data.length){const paths=data.map(f=>id+"/"+f.name);sb.storage.from("trip-pdfs").remove(paths).catch(()=>{});}
+    }).catch(()=>{});
+  }
+}
 
 /* -- personalizar colores de categoría -- */
 function sheetCatColors(){
@@ -882,8 +888,9 @@ function sheetAddAct(tid,date,aid){
   const t=tget(tid);const day=t.itinerary.find(d=>d.date===date);
   const a=aid&&day?day.acts.find(x=>x.id===aid):null;
   window._actCat=a?a.cat:"actividad";
-  window._actPdf=a?(a.pdf||null):null;
+  window._actPdfPath=a?(a.pdfPath||null):null;
   window._actPdfName=a?(a.pdfName||null):null;
+  window._actPdfLegacy=a?(a.pdf||null):null; // PDFs viejos guardados como base64 (antes de usar Storage)
   const cats=Object.entries(CATS).map(([k,c])=>
     `<div class="catopt ${window._actCat===k?'on':''}" id="cat-${k}" style="${window._actCat===k?'background:var(--accent,var(--grad));color:var(--accent-text,#fff)':''}" onclick="pickCat('${k}')">${c.emoji} ${c.lbl}</div>`).join("");
   openSheet(shell(a?"Editar actividad":"Nueva actividad",`
@@ -894,44 +901,67 @@ function sheetAddAct(tid,date,aid){
     <div class="field"><label>Dirección (para el mapa)</label><input id="a-addr" value="${a?esc(a.addr||''):''}" placeholder="Senso-ji, 2-3-1 Asakusa, Tokio"></div>
     <div class="field"><label>Descripción</label><textarea id="a-desc" placeholder="Templo más antiguo de Tokio">${a?esc(a.desc):''}</textarea></div>
     <div class="field"><label>Notas</label><textarea id="a-notes" placeholder="Llevar efectivo">${a?esc(a.notes):''}</textarea></div>
-    <div id="a-pdf-wrap">${pdfFieldHtml()}</div>
+    <div id="a-pdf-wrap">${pdfFieldHtml(tid)}</div>
     <button class="btn" onclick="saveAct('${tid}','${date}'${aid?`,'${aid}'`:''})">${a?'Guardar':'Agregar'}</button>
     ${a?`<button class="btn danger" style="margin-top:8px" onclick="delAct('${tid}','${date}','${aid}')">Eliminar</button>`:''}`,accentVars(t)));
 }
 function pickCat(k){window._actCat=k;
   Object.entries(CATS).forEach(([kk,c])=>{const el=document.getElementById("cat-"+kk);
     if(!el)return;if(kk===k){el.classList.add("on");el.style.background="var(--accent,var(--grad))";el.style.color="var(--accent-text,#fff)";}else{el.classList.remove("on");el.style.background="";el.style.color="";}});
-  const wrap=document.getElementById("a-pdf-wrap");if(wrap)wrap.innerHTML=pdfFieldHtml();}
-function pdfFieldHtml(){
-  const has=!!window._actPdf;
+  const wrap=document.getElementById("a-pdf-wrap");if(wrap)wrap.innerHTML=pdfFieldHtml(window._curActTid);}
+function pdfFieldHtml(tid){
+  window._curActTid=tid;
+  const has=!!(window._actPdfPath||window._actPdfLegacy);
   const label=PDF_LABELS[window._actCat]||PDF_LABELS.otro;
   return `<div class="field"><label>${label}</label>
-    <div class="pdfpick ${has?'has':''}" onclick="document.getElementById('a-pdf').click()">${has?'📄 '+esc(window._actPdfName||'documento.pdf'):'📎 Subir PDF'}</div>
-    <input id="a-pdf" type="file" accept="application/pdf" style="display:none" onchange="pickActPdf(this)">
+    <div class="pdfpick ${has?'has':''}" id="a-pdf-pick" onclick="document.getElementById('a-pdf').click()">${has?'📄 '+esc(window._actPdfName||'documento.pdf'):'📎 Subir PDF'}</div>
+    <input id="a-pdf" type="file" accept="application/pdf" style="display:none" onchange="pickActPdf(this,'${tid}')">
     ${has?`<button type="button" class="btn ghost" style="margin-top:8px" onclick="removeActPdf()">Quitar PDF</button>`:""}
     </div>`;
 }
-function pickActPdf(input){const f=input.files[0];if(!f)return;
+async function pickActPdf(input,tid){
+  const f=input.files[0];if(!f)return;
   if(f.type!=="application/pdf"){toast("Solo se aceptan archivos PDF");return;}
-  if(f.size>8*1024*1024){toast("El PDF es muy pesado (máx. 8MB)");return;}
-  const r=new FileReader();
-  r.onload=e=>{window._actPdf=e.target.result;window._actPdfName=f.name;
-    const wrap=document.getElementById("a-pdf-wrap");if(wrap)wrap.innerHTML=pdfFieldHtml();};
-  r.readAsDataURL(f);
+  if(f.size>20*1024*1024){toast("El PDF es muy pesado (máx. 20MB)");return;}
+  if(!cloudReady){toast("Conéctate a internet para subir el PDF");return;}
+  const pick=document.getElementById("a-pdf-pick");
+  if(pick)pick.textContent="⏳ Subiendo...";
+  const path=tid+"/"+uid()+"-"+Date.now()+".pdf";
+  try{
+    const {error}=await sb.storage.from("trip-pdfs").upload(path,f,{contentType:"application/pdf"});
+    if(error)throw error;
+    const oldPath=window._actPdfPath;
+    window._actPdfPath=path;window._actPdfName=f.name;window._actPdfLegacy=null;
+    if(oldPath)sb.storage.from("trip-pdfs").remove([oldPath]).catch(()=>{});
+    const wrap=document.getElementById("a-pdf-wrap");if(wrap)wrap.innerHTML=pdfFieldHtml(tid);
+    toast("PDF subido ✓");
+  }catch(e){toast("No se pudo subir el PDF: "+(e.message||"error"));
+    const wrap=document.getElementById("a-pdf-wrap");if(wrap)wrap.innerHTML=pdfFieldHtml(tid);}
 }
-function removeActPdf(){window._actPdf=null;window._actPdfName=null;
-  const wrap=document.getElementById("a-pdf-wrap");if(wrap)wrap.innerHTML=pdfFieldHtml();}
+function removeActPdf(){
+  if(window._actPdfPath&&cloudReady)sb.storage.from("trip-pdfs").remove([window._actPdfPath]).catch(()=>{});
+  window._actPdfPath=null;window._actPdfName=null;window._actPdfLegacy=null;
+  const wrap=document.getElementById("a-pdf-wrap");if(wrap)wrap.innerHTML=pdfFieldHtml(window._curActTid);}
 function saveAct(tid,date,aid){const t=tget(tid);
   const name=val("a-name");if(!name){toast("Ponle nombre");return;}
   let day=t.itinerary.find(d=>d.date===date);if(!day){day={id:uid(),date,acts:[]};t.itinerary.push(day);}
   const data={time:val("a-time"),name,cat:window._actCat,loc:val("a-loc"),addr:val("a-addr"),desc:val("a-desc"),notes:val("a-notes"),
-    pdf:window._actPdf||null,pdfName:window._actPdfName||null};
+    pdfPath:window._actPdfPath||null,pdfName:window._actPdfName||null,pdf:window._actPdfLegacy||null};
   if(aid){const a=day.acts.find(x=>x.id===aid);Object.assign(a,data);}else{day.acts.push({id:uid(),...data});}
   save();closeSheet();render();
 }
-function viewPdf(tid,date,aid){
+async function viewPdf(tid,date,aid){
   const t=tget(tid);const day=t.itinerary.find(d=>d.date===date);const a=day&&day.acts.find(x=>x.id===aid);
-  if(!a||!a.pdf){toast("No hay documento");return;}
+  if(!a||(!a.pdfPath&&!a.pdf)){toast("No hay documento");return;}
+  if(a.pdfPath){
+    if(!cloudReady){toast("Conéctate a internet para ver el documento");return;}
+    try{
+      const {data,error}=await sb.storage.from("trip-pdfs").createSignedUrl(a.pdfPath,60);
+      if(error)throw error;
+      window.open(data.signedUrl,"_blank");
+    }catch(e){toast("No se pudo abrir el PDF");}
+    return;
+  }
   try{
     const parts=a.pdf.split(",");
     const mime=(parts[0].match(/:(.*?);/)||[])[1]||"application/pdf";
@@ -944,6 +974,8 @@ function viewPdf(tid,date,aid){
   }catch(e){toast("No se pudo abrir el PDF");}
 }
 function delAct(tid,date,aid){const t=tget(tid);const day=t.itinerary.find(d=>d.date===date);
+  const a=day.acts.find(x=>x.id===aid);
+  if(a&&a.pdfPath&&cloudReady)sb.storage.from("trip-pdfs").remove([a.pdfPath]).catch(()=>{});
   day.acts=day.acts.filter(a=>a.id!==aid);save();closeSheet();render();}
 
 /* -- destino -- */
