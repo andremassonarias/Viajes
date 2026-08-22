@@ -64,6 +64,10 @@
     border-radius:50%;background:var(--surface);color:var(--ink);font-size:21px;line-height:1;
     box-shadow:var(--shadow);display:grid;place-items:center}
   .add-corner:active{transform:scale(.94);background:var(--line-2)}
+  .settings-corner{position:absolute;top:calc(var(--safe-t) + 16px);right:66px;width:38px;height:38px;
+    border-radius:50%;background:var(--surface);color:var(--ink);font-size:16px;line-height:1;
+    box-shadow:var(--shadow);display:grid;place-items:center}
+  .settings-corner:active{transform:scale(.94);background:var(--line-2)}
   .home-sub{color:var(--ink-2);font-size:15px;margin-top:4px}
   .trips{padding:14px 18px calc(34px + var(--safe-b))}
   .trip-card{position:relative;border-radius:24px;overflow:hidden;margin-bottom:16px;
@@ -122,10 +126,10 @@
 
   .card{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
   .stat-row{display:flex;gap:11px;margin-bottom:14px}
-  .stat{flex:1;background:var(--surface);border-radius:16px;padding:14px;box-shadow:var(--shadow);text-align:center}
-  .stat .n{font-size:22px;font-weight:800;letter-spacing:-.02em}
+  .stat{flex:1;background:var(--accent-tint,var(--surface));border-radius:16px;padding:14px;box-shadow:var(--shadow);text-align:center}
+  .stat .n{font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--accent-solid,var(--ink))}
   .stat .l{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
-  .countdown{background:var(--grad);color:#fff;border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:none;position:relative}
+  .countdown{background:var(--accent-tint,var(--surface));color:var(--accent-solid,var(--ink));border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:none;position:relative}
   .sw-group-label{font-size:13px;font-weight:700;color:var(--ink-2);margin:14px 4px 10px;text-transform:uppercase;letter-spacing:.04em}
   .sw-grid{display:flex;flex-wrap:wrap;gap:12px}
   .sw{width:46px;height:46px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);position:relative}
@@ -135,7 +139,7 @@
   .sw-fam{display:flex;flex-direction:column;align-items:center;gap:5px;width:60px}
   .sw-fam .lbl{font-size:11px;color:var(--muted);font-weight:600;text-align:center;line-height:1.1}
   .countdown .big{font-size:32px;font-weight:800;letter-spacing:-.02em}
-  .countdown .lbl{font-size:13px;opacity:.92;font-weight:600}
+  .countdown .lbl{font-size:13px;font-weight:600;color:var(--muted)}
   .chips{display:flex;gap:8px;flex-wrap:wrap}
   .chip{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:8px 12px;
     display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;box-shadow:var(--shadow)}
@@ -173,7 +177,8 @@
   .dest-h .sub{font-size:12.5px;color:var(--muted);font-weight:600}
   .dest-body{padding:0 16px 12px}
   .place{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line-2)}
-  .place .pi{font-size:19px;flex:0 0 26px;text-align:center}
+  .place .pi{font-size:18px;flex:0 0 34px;width:34px;height:34px;border-radius:10px;text-align:center;
+    display:grid;place-items:center;background:var(--accent-tint,var(--line-2))}
   .place .nm{font-weight:700;font-size:15px}
   .place .no{font-size:13px;color:var(--muted);margin-top:1px}
   .place-add{width:100%;text-align:left;color:var(--ink);font-weight:700;font-size:14px;padding:11px 0;border-top:1px solid var(--line-2)}
@@ -188,7 +193,7 @@
   .pos{color:#12B7A6}.neg{color:#FF5A5F}.zero{color:var(--muted)}
   .settle{font-size:13px;color:var(--ink-2);padding:7px 0;border-top:1px dashed var(--line);line-height:1.5}
   .exp{display:flex;gap:13px;align-items:center;background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:14px;margin-bottom:10px}
-  .exp .ei{width:42px;height:42px;border-radius:12px;background:var(--line-2);display:grid;place-items:center;font-size:20px;flex:0 0 auto}
+  .exp .ei{width:42px;height:42px;border-radius:12px;background:var(--accent-tint,var(--line-2));display:grid;place-items:center;font-size:20px;flex:0 0 auto}
   .exp .en{font-weight:700;font-size:15px}
   .exp .em{font-size:12.5px;color:var(--muted);margin-top:1px}
   .exp .ea{margin-left:auto;text-align:right;font-weight:800;font-size:15px;flex:0 0 auto}
@@ -268,6 +273,9 @@ const CATS={
   vuelo:{lbl:"Vuelo",emoji:"✈️",color:"var(--c-vuelo)"},
   otro:{lbl:"Otro",emoji:"📍",color:"var(--c-otro)"}
 };
+const CAT_HEX={comida:"#FF7A59",actividad:"#6C5CE7",transporte:"#12B7A6",hotel:"#3A56E8",vuelo:"#3AA9FF",otro:"#8A8CA0"};
+function catColor(k){return (state.catColors&&state.catColors[k])||CAT_HEX[k]||CAT_HEX.otro;}
+function setCatColor(k,color){state.catColors=state.catColors||{};state.catColors[k]=color;save();render();}
 const PLACE_CATS={
   hotel:{lbl:"Hotel",emoji:"🏨"},restaurante:{lbl:"Restaurante",emoji:"🍽️"},
   antro:{lbl:"Antro / Bar",emoji:"🍸"},actividad:{lbl:"Actividad",emoji:"🎟️"},
@@ -374,6 +382,7 @@ function homeView(){
   return `<div class="screen"><div class="scroll">
     <div class="home-head">
       <button class="add-corner" onclick="sheetCreateTrip()">＋</button>
+      <button class="settings-corner" onclick="sheetCatColors()">🎨</button>
       <div class="eyebrow">Tus aventuras</div>
       <h1 class="home-title">Mis viajes</h1>
       <div class="home-sub">${state.trips.length} viaje${state.trips.length!==1?"s":""} en marcha</div>
@@ -422,8 +431,8 @@ function paneResumen(t){
   const nActs=t.itinerary.reduce((s,d)=>s+d.acts.length,0);
   const totals=expenseTotals(t);
   const totalStr=Object.keys(totals).length?Object.entries(totals).map(([c,v])=>money(v,c)).join(" · "):"—";
-  const route=(t.destinos||[]).map((d,i,a)=>`<div class="chip">📍 ${esc(d.name)}</div>`).join("");
-  const people=t.travelers.map(p=>`<div class="chip"><span class="av" style="background:${accentOf(t)};color:${accentTextOf(t)}">${initials(p.name)}</span>${esc(p.name)}</div>`).join("");
+  const route=(t.destinos||[]).map((d,i,a)=>`<div class="chip" style="background:var(--accent-tint,var(--surface))"><span style="width:9px;height:9px;border-radius:50%;background:var(--accent-solid,var(--ink));flex:0 0 auto"></span>${esc(d.name)}</div>`).join("");
+  const people=t.travelers.map(p=>`<div class="chip" style="background:var(--accent-tint,var(--surface))"><span class="av" style="background:${accentOf(t)};color:${accentTextOf(t)}">${initials(p.name)}</span>${esc(p.name)}</div>`).join("");
   return `${cdBox}
     <div class="stat-row">
       <div class="stat"><div class="n">${daysBetween(t.start,t.end)}</div><div class="l">Días</div></div>
@@ -431,7 +440,7 @@ function paneResumen(t){
       <div class="stat"><div class="n">${(t.destinos||[]).length}</div><div class="l">Destinos</div></div>
     </div>
     <div class="section-h"><h2>Gasto total</h2><span class="add-link" onclick="setTab('gastos')">Ver gastos ›</span></div>
-    <div class="card" style="font-size:22px;font-weight:800;letter-spacing:-.02em">${totalStr}</div>
+    <div class="card" style="font-size:22px;font-weight:800;letter-spacing:-.02em;background:var(--accent-tint,var(--surface));color:var(--accent-solid,var(--ink))">${totalStr}</div>
     ${route?`<div class="section-h"><h2>Ruta</h2></div><div class="chips">${route}</div>`:""}
     <div class="section-h"><h2>Viajeros</h2><span class="add-link" onclick="sheetTripMenu('${t.id}')">Editar ›</span></div>
     <div class="chips">${people}</div>`;
@@ -448,15 +457,15 @@ function paneItinerario(t){
     const day=byDate[date];
     const acts=(day?day.acts:[]).slice().sort((a,b)=>(a.time||"").localeCompare(b.time||""));
     const rows=acts.length?acts.map(a=>{
-      const c=CATS[a.cat]||CATS.otro;
+      const c=CATS[a.cat]||CATS.otro;const cc=catColor(a.cat);
       return `<div class="act" onclick="sheetAddAct('${t.id}','${date}','${a.id}')">
         <div class="time">${esc(a.time||"")}</div>
-        <div class="bar" style="background:${c.color}"></div>
+        <div class="bar" style="background:${cc}"></div>
         <div class="info">
           <div class="nm">${esc(a.name)}</div>
           ${a.loc?`<div class="loc">📍 ${esc(a.loc)}</div>`:""}
           ${a.desc?`<div class="desc">${esc(a.desc)}</div>`:""}
-          <span class="catpill" style="background:${c.color}1a;color:${c.color}">${c.emoji} ${c.lbl}</span>
+          <span class="catpill" style="background:${cc}1a;color:${cc}">${c.emoji} ${c.lbl}</span>
           ${a.pdf?`<button class="pdf-chip" onclick="event.stopPropagation();viewPdf('${t.id}','${date}','${a.id}')">📄 Ver documento</button>`:""}
           ${mapBlock(a.addr)}
         </div></div>`;
@@ -659,6 +668,21 @@ function mChangeCover(id,input){const f=input.files[0];if(!f)return;const r=new 
 function delTrip(id){if(!confirm("¿Eliminar este viaje? No se puede deshacer."))return;
   state.trips=state.trips.filter(t=>t.id!==id);save();closeSheet();go({name:"home"});toast("Viaje eliminado");}
 
+/* -- personalizar colores de categoría -- */
+function sheetCatColors(){
+  const swc=(k,color,sel)=>`<div class="sw ${sel?'on':''}" style="background:${color}" onclick="setCatColor('${k}','${color}');sheetCatColors()"></div>`;
+  const rows=Object.keys(CATS).map(k=>{
+    const c=CATS[k];const cur=catColor(k);
+    const options=[CAT_HEX[k],...CD_GRAYS].filter((v,i,a)=>a.indexOf(v)===i);
+    return `<div class="field"><label>${c.emoji} ${c.lbl}</label>
+      <div class="sw-grid">${options.map(o=>swc(k,o,cur.toLowerCase()===o.toLowerCase())).join("")}</div></div>`;
+  }).join("");
+  openSheet(shell("Colores de categoría",`
+    <p style="font-size:13.5px;color:var(--ink-2);margin:-4px 0 14px">Elige el color con el que se marca cada tipo de actividad en el itinerario.</p>
+    ${rows}
+    <button class="btn ghost" style="margin-top:8px" onclick="closeSheet()">Listo</button>`));
+}
+
 /* -- actividad -- */
 const PDF_LABELS={
   vuelo:"Boleto de vuelo (PDF, opcional)",
@@ -842,7 +866,7 @@ function saveExp(tid,eid){const t=tget(tid);
 function delExp(tid,eid){const t=tget(tid);t.expenses=t.expenses.filter(e=>e.id!==eid);save();closeSheet();render();}
 
 /* ============ COLOR CUENTA REGRESIVA ============ */
-const CD_GRAYS=["#000000","#1C1C1E","#3A3A3C","#636366","#8E8E93","#AEAEB2","#C7C7CC","#E5E5EA","#F2F2F7","#FFFFFF"];
+const CD_GRAYS=["#000000","#1C1C1E","#3A3A3C","#636366","#8E8E93","#AEAEB2","#C7C7CC","#E5E5EA","#F2F2F7","#FFFFFF","#F4C2C2","#B3EBF2","#80EB80"];
 function textOn(hex){const h=hex.replace("#","");
   const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
   return (0.299*r+0.587*g+0.114*b)>150?"#1A1A2E":"#fff";}
@@ -869,8 +893,7 @@ function accentVars(t){
     `--accent-shadow:${shadow};--accent-shadow-lg:${shadowLg};--accent-tint:${tint};`;
 }
 function accentTextOf(t){return t.cdColor?textOn(t.cdColor):"#fff";}
-function cdStyle(t){if(!t.cdColor)return "background:var(--grad);color:#fff;box-shadow:none";
-  return `background:${t.cdColor};color:${textOn(t.cdColor)};box-shadow:none`;}
+function cdStyle(t){return "background:var(--accent-tint,var(--surface));color:var(--accent-solid,var(--ink));box-shadow:none";}
 function setCd(tid,color){tget(tid).cdColor=color||null;save();closeSheet();render();}
 
 /* ============ MAPA (Apple Maps) ============ */
