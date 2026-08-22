@@ -359,12 +359,16 @@ function pushAllTrips(){
 async function shareTrip(tripId){
   if(!cloudReady){toast("Conéctate a internet para compartir");return;}
   try{
+    const t=tget(tripId);
+    const {_ownerId,_isOwner,...clean}=t;
+    const {error:upErr}=await sb.from("trips").upsert({id:t.id,owner_id:t._ownerId||myUid,data:clean,updated_at:new Date().toISOString()});
+    if(upErr)throw upErr;
     const {data,error}=await sb.from("trip_invites").insert({trip_id:tripId,created_by:myUid}).select("token").single();
     if(error)throw error;
     const link=location.href.split("?")[0]+"?invite="+data.token;
     if(navigator.share){navigator.share({title:"Únete al viaje",url:link}).catch(()=>{});}
     else{navigator.clipboard?.writeText(link);toast("Link copiado 🔗");}
-  }catch(e){toast("No se pudo crear el link 😕");}
+  }catch(e){console.error("shareTrip error:",e);toast("No se pudo crear el link: "+(e.message||e.code||"error desconocido"));}
 }
 async function handleInviteFromUrl(){
   const params=new URLSearchParams(location.search);
