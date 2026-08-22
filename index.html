@@ -252,6 +252,14 @@
   .traveler-add input{flex:1}
   .traveler-add button{flex:0 0 auto;padding:0 16px;border-radius:12px;background:var(--bg);font-weight:800;color:var(--ink)}
   .tv-chip{display:inline-flex;align-items:center;gap:7px;background:var(--bg);border-radius:20px;padding:7px 8px 7px 12px;font-weight:700;font-size:14px;margin:0 7px 7px 0}
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 0}
+  .toggle-row .tt{font-size:14px;font-weight:700}
+  .toggle-row .st{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .switch{position:relative;width:48px;height:28px;border-radius:16px;background:var(--line-2);flex:0 0 auto;transition:background .18s}
+  .switch.on{background:var(--accent-solid,#34C759)}
+  .switch::after{content:"";position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#fff;
+    box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .18s}
+  .switch.on::after{transform:translateX(20px)}
   .tv-chip button{color:var(--muted);font-weight:900;font-size:15px;line-height:1}
   .toast{position:fixed;bottom:calc(90px + var(--safe-b));left:50%;transform:translateX(-50%);
     background:#1A1A2E;color:#fff;padding:11px 18px;border-radius:22px;font-weight:600;font-size:14px;z-index:90;
@@ -348,7 +356,6 @@ function pushAllTrips(){
   clearTimeout(_pushTimer);
   _pushTimer=setTimeout(async()=>{
     for(const t of state.trips){
-      if(t._isOwner===false)continue; // los invitados también pueden editar: se permite igual, RLS decide
       const {_ownerId,_isOwner,...clean}=t;
       try{
         await sb.from("trips").upsert({id:t.id,owner_id:t._ownerId||myUid,data:clean,updated_at:new Date().toISOString()});
@@ -550,7 +557,7 @@ function paneItinerario(t){
     const acts=(day?day.acts:[]).slice().sort((a,b)=>(a.time||"").localeCompare(b.time||""));
     const rows=acts.length?acts.map(a=>{
       const c=CATS[a.cat]||CATS.otro;const cc=catColor(a.cat);
-      return `<div class="act" onclick="sheetAddAct('${t.id}','${date}','${a.id}')">
+      return `<div class="act" onclick="${canEdit(t)?`sheetAddAct('${t.id}','${date}','${a.id}')`:''}">
         <div class="time">${esc(a.time||"")}</div>
         <div class="bar" style="background:${cc}"></div>
         <div class="info">
@@ -572,7 +579,7 @@ function paneItinerario(t){
       <div class="day-h"><span class="dnum">Día ${i+1}</span>
         <span class="ddate">${DIAS[D.getDay()]} ${D.getDate()} ${MESES[D.getMonth()]}</span></div>
       ${rows}
-      <div class="add-link" style="padding:4px 2px 6px" onclick="sheetAddAct('${t.id}','${date}')">＋ Agregar actividad</div>
+      ${canEdit(t)?`<div class="add-link" style="padding:4px 2px 6px" onclick="sheetAddAct('${t.id}','${date}')">＋ Agregar actividad</div>`:""}
     </div>`;
   }).join("");
   return html;
@@ -581,10 +588,11 @@ function paneItinerario(t){
 /* ---- Lugares ---- */
 function paneLugares(t){
   const accent=accentOf(t);
+  const editable=canEdit(t);
   const dests=(t.destinos||[]).map(d=>{
     const places=d.places.map(p=>{
       const pc=PLACE_CATS[p.cat]||PLACE_CATS.otro;
-      return `<div class="place" onclick="sheetAddPlace('${t.id}','${d.id}','${p.id}')">
+      return `<div class="place" onclick="${editable?`sheetAddPlace('${t.id}','${d.id}','${p.id}')`:''}">
         <div class="pi">${pc.emoji}</div>
         <div style="flex:1"><div class="nm">${esc(p.name)}</div>${p.note?`<div class="no">${esc(p.note)}</div>`:`<div class="no">${pc.lbl}</div>`}</div></div>`;
     }).join("");
@@ -598,14 +606,14 @@ function paneLugares(t){
     return `<div class="dest">
       <div class="dest-h"><div class="dest-pin" style="background:${accent};color:${accentTextOf(t)}">📍</div>
         <div style="flex:1"><div class="nm">${esc(d.name)}</div>${subParts?`<div class="sub">${esc(subParts)}</div>`:""}</div>
-        <button class="icon-btn" style="background:var(--bg);color:var(--muted)" onclick="event.stopPropagation();sheetAddDest('${t.id}','${d.id}')">✎</button>
+        ${editable?`<button class="icon-btn" style="background:var(--bg);color:var(--muted)" onclick="event.stopPropagation();sheetAddDest('${t.id}','${d.id}')">✎</button>`:""}
       </div>
       <div class="dest-body">${places}
-        <button class="place-add" onclick="sheetAddPlace('${t.id}','${d.id}')">＋ Agregar lugar</button>
+        ${editable?`<button class="place-add" onclick="sheetAddPlace('${t.id}','${d.id}')">＋ Agregar lugar</button>`:""}
       </div></div>`;
   }).join("");
   return `${dests||`<div class="day-empty" style="padding:20px 2px">Agrega los destinos de este viaje (ej. Madrid, luego Berlín) y guarda hoteles, restaurantes y antros en cada uno.</div>`}
-    <button class="btn ghost" style="margin-top:6px" onclick="sheetAddDest('${t.id}')">＋ Agregar destino</button>`;
+    ${editable?`<button class="btn ghost" style="margin-top:6px" onclick="sheetAddDest('${t.id}')">＋ Agregar destino</button>`:""}`;
 }
 
 /* ---- Gastos ---- */
@@ -625,8 +633,9 @@ function balances(t,cur){
 }
 function paneGastos(t){
   const accent=accentOf(t);
+  const editable=canEdit(t);
   if(!t.expenses.length)return `<div class="day-empty" style="padding:20px 2px">Aún no hay gastos. Agrega el primero y la app calcula cuánto le toca a cada quien.</div>
-    <button class="btn" style="background:${accent}" onclick="sheetAddExp('${t.id}')">＋ Agregar gasto</button>`;
+    ${editable?`<button class="btn" style="background:${accent}" onclick="sheetAddExp('${t.id}')">＋ Agregar gasto</button>`:""}`;
   const curs=[...new Set(t.expenses.map(e=>e.cur))];
   let out="";
   curs.forEach(cur=>{
@@ -640,7 +649,7 @@ function paneGastos(t){
     const exps=t.expenses.filter(e=>e.cur===cur).map(e=>{
       const payer=t.travelers.find(p=>p.id===e.paidBy);
       const per=e.split.method==="equal"?`entre ${e.split.who.length}`:"montos personalizados";
-      return `<div class="exp" onclick="sheetAddExp('${t.id}','${e.id}')">
+      return `<div class="exp" onclick="${editable?`sheetAddExp('${t.id}','${e.id}')`:''}">
         <div class="ei">🧾</div>
         <div><div class="en">${esc(e.concept)}</div><div class="em">Pagó ${payer?esc(payer.name):"—"} · ${per}</div></div>
         <div class="ea">${money(e.amount,cur)}</div></div>`;
@@ -649,7 +658,7 @@ function paneGastos(t){
       <div class="balance"><h3>Quién debe qué</h3>${rows}${settle?`<div style="margin-top:6px">${settle}</div>`:""}</div>
       ${exps}`;
   });
-  return out+`<button class="btn" style="margin-top:8px;background:${accent}" onclick="sheetAddExp('${t.id}')">＋ Agregar gasto</button>`;
+  return out+(editable?`<button class="btn" style="margin-top:8px;background:${accent}" onclick="sheetAddExp('${t.id}')">＋ Agregar gasto</button>`:"");
 }
 function settleUp(bal,cur,t){
   const name=id=>{const p=t.travelers.find(x=>x.id===id);return p?p.name:"?";};
@@ -693,8 +702,18 @@ function sheetCreateTrip(){
     <div class="field"><label>Viajeros</label>
       <div class="traveler-add"><input id="f-tv" placeholder="Nombre" onkeydown="if(event.key==='Enter')addTv()"><button onclick="addTv()">Agregar</button></div>
       <div id="f-tvlist"></div></div>
+    <div class="field toggle-row" onclick="event.target.closest('button')||toggleAllowEdit('f')">
+      <div><div class="tt">Permitir que editen</div><div class="st" id="f-allowedit-st">Los invitados pueden agregar y cambiar cosas</div></div>
+      <div class="switch on" id="f-allowedit"></div>
+    </div>
     <button class="btn" onclick="saveTrip()">Crear viaje</button>`));
-  window._tvs=[{id:uid(),name:"André"}];renderTvs();
+  window._tvs=[{id:uid(),name:"André"}];window._allowEdit=true;renderTvs();
+}
+function toggleAllowEdit(prefix){
+  window._allowEdit=!window._allowEdit;
+  const sw=document.getElementById(prefix+"-allowedit");sw.classList.toggle("on",window._allowEdit);
+  const st=document.getElementById(prefix+"-allowedit-st");
+  if(st)st.textContent=window._allowEdit?"Los invitados pueden agregar y cambiar cosas":"Los invitados solo pueden ver el viaje";
 }
 function addTv(){const i=document.getElementById("f-tv");const v=i.value.trim();if(!v)return;
   window._tvs.push({id:uid(),name:v});i.value="";renderTvs();i.focus();}
@@ -712,13 +731,21 @@ function saveTrip(){
   if(end<start){toast("El regreso no puede ser antes del inicio");return;}
   const t={id:uid(),name,destination:dest||name,flag:val("f-flag")||"🌍",start,end,
     cover:img_tmp||grad("#6C5CE7","#FF7A59"),travelers:window._tvs.length?window._tvs:[{id:uid(),name:"Yo"}],
+    allowEdit:window._allowEdit!==false,
     destinos:[],itinerary:[],expenses:[]};
   state.trips.unshift(t);save();closeSheet();openTrip(t.id);toast("Viaje creado ✨");
 }
 function val(id){const e=document.getElementById(id);return e?e.value.trim():"";}
 
 /* -- menú viaje (editar todo / borrar) -- */
+function canEdit(t){return t._isOwner!==false || t.allowEdit!==false;}
 function sheetTripMenu(id){const t=tget(id);
+  if(!canEdit(t)){
+    openSheet(shell("Este viaje",`
+      <p style="font-size:14px;color:var(--ink-2)">La dueña de este viaje puso el modo "solo lectura", así que puedes ver todo pero no agregar ni cambiar nada.</p>
+      <button class="btn ghost" onclick="closeSheet()">Cerrar</button>`,accentVars(t)));
+    return;
+  }
   const sw=(color,sel,onclick,style)=>`<div class="sw ${sel?'on':''}" style="background:${style||color}" onclick="${onclick}"></div>`;
   const colorRow=`<div class="sw-grid" style="margin-bottom:2px">
       ${sw("",!t.cdColor,`setCd('${id}','')`,"var(--grad)")}
@@ -737,10 +764,18 @@ function sheetTripMenu(id){const t=tget(id);
     <div class="field"><label>Viajeros</label>
       <div class="traveler-add"><input id="m-tv" placeholder="Agregar viajero" onkeydown="if(event.key==='Enter')mAddTv('${id}')"><button onclick="mAddTv('${id}')">Agregar</button></div>
       <div id="m-tvlist">${t.travelers.map((p,i)=>`<span class="tv-chip">${esc(p.name)} <button onclick="mDelTv('${id}',${i})">×</button></span>`).join("")}</div></div>
+    <div class="field toggle-row" onclick="event.target.closest('button')||toggleAllowEditM('${id}')">
+      <div><div class="tt">Permitir que editen</div><div class="st" id="m-allowedit-st">${t.allowEdit!==false?"Los invitados pueden agregar y cambiar cosas":"Los invitados solo pueden ver el viaje"}</div></div>
+      <div class="switch ${t.allowEdit!==false?'on':''}" id="m-allowedit"></div>
+    </div>
     <button class="btn" onclick="saveTripEdit('${id}')">Guardar cambios</button>
     <button class="btn ghost" style="margin-top:8px" onclick="shareTrip('${id}')">🔗 Compartir con familia</button>
     <button class="btn danger" style="margin-top:8px" onclick="delTrip('${id}')">Eliminar viaje</button>
     <button class="btn ghost" style="margin-top:8px" onclick="closeSheet()">Cerrar</button>`,accentVars(t)));
+}
+function toggleAllowEditM(id){const t=tget(id);t._pendingAllowEdit=!(t._pendingAllowEdit!==undefined?t._pendingAllowEdit:t.allowEdit!==false);
+  const sw=document.getElementById("m-allowedit");sw.classList.toggle("on",t._pendingAllowEdit);
+  document.getElementById("m-allowedit-st").textContent=t._pendingAllowEdit?"Los invitados pueden agregar y cambiar cosas":"Los invitados solo pueden ver el viaje";
 }
 function saveTripEdit(id){const t=tget(id);
   const name=val("m-name"),start=val("m-start"),end=val("m-end");
@@ -748,6 +783,7 @@ function saveTripEdit(id){const t=tget(id);
   if(!start||!end){toast("Elige las fechas");return;}
   if(end<start){toast("El regreso no puede ser antes del inicio");return;}
   t.name=name;t.destination=val("m-dest")||name;t.flag=val("m-flag")||"🌍";t.start=start;t.end=end;
+  if(t._pendingAllowEdit!==undefined){t.allowEdit=t._pendingAllowEdit;delete t._pendingAllowEdit;}
   save();closeSheet();render();toast("Viaje actualizado");
 }
 function mAddTv(id){const t=tget(id);const i=document.getElementById("m-tv");const v=i.value.trim();if(!v)return;
