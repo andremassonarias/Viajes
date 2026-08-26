@@ -608,7 +608,10 @@ function paneItinerario(t){
           ${a.loc?`<div class="loc">📍 ${esc(a.loc)}</div>`:""}
           ${a.desc?`<div class="desc">${esc(a.desc)}</div>`:""}
           <span class="catpill" style="background:${cc}1a;color:${cc}">${c.emoji} ${c.lbl}</span>
-          ${(a.pdf||a.pdfPath)?`<button class="pdf-chip" onclick="event.stopPropagation();viewPdf('${t.id}','${date}','${a.id}')">📄 Ver documento</button>`:""}
+          ${(a.pdf||a.pdfPath)?`<span style="display:inline-flex;gap:6px">
+            <button class="pdf-chip" onclick="event.stopPropagation();viewPdf('${t.id}','${date}','${a.id}')">📄 Ver documento</button>
+            ${a.pdfPath?`<button class="pdf-chip" onclick="event.stopPropagation();downloadPdfOffline('${t.id}','${date}','${a.id}',this)">⬇️ Guardar offline</button>`:""}
+          </span>`:""}
           ${mapBlock(a.addr)}
         </div></div>`;
     }).join(""):`<div class="day-empty">Sin actividades aún</div>`;
@@ -967,6 +970,9 @@ function pdfFieldHtml(tid){
     ${has?`<button type="button" class="btn ghost" style="margin-top:8px" onclick="removeActPdf()">Quitar PDF</button>`:""}
     </div>`;
 }
+function clearPdfCache(path){
+  if(path&&"caches" in window)caches.open(PDF_CACHE).then(c=>c.delete("/pdf-cache/"+path)).catch(()=>{});
+}
 async function pickActPdf(input,tid){
   const f=input.files[0];if(!f)return;
   if(f.type!=="application/pdf"){toast("Solo se aceptan archivos PDF");return;}
@@ -980,14 +986,14 @@ async function pickActPdf(input,tid){
     if(error)throw error;
     const oldPath=window._actPdfPath;
     window._actPdfPath=path;window._actPdfName=f.name;window._actPdfLegacy=null;
-    if(oldPath)sb.storage.from("trip-pdfs").remove([oldPath]).catch(()=>{});
+    if(oldPath){sb.storage.from("trip-pdfs").remove([oldPath]).catch(()=>{});clearPdfCache(oldPath);}
     const wrap=document.getElementById("a-pdf-wrap");if(wrap)wrap.innerHTML=pdfFieldHtml(tid);
     toast("PDF subido ✓");
   }catch(e){toast("No se pudo subir el PDF: "+(e.message||"error"));
     const wrap=document.getElementById("a-pdf-wrap");if(wrap)wrap.innerHTML=pdfFieldHtml(tid);}
 }
 function removeActPdf(){
-  if(window._actPdfPath&&cloudReady)sb.storage.from("trip-pdfs").remove([window._actPdfPath]).catch(()=>{});
+  if(window._actPdfPath){if(cloudReady)sb.storage.from("trip-pdfs").remove([window._actPdfPath]).catch(()=>{});clearPdfCache(window._actPdfPath);}
   window._actPdfPath=null;window._actPdfName=null;window._actPdfLegacy=null;
   const wrap=document.getElementById("a-pdf-wrap");if(wrap)wrap.innerHTML=pdfFieldHtml(window._curActTid);}
 function saveAct(tid,date,aid){const t=tget(tid);
@@ -998,11 +1004,36 @@ function saveAct(tid,date,aid){const t=tget(tid);
   if(aid){const a=day.acts.find(x=>x.id===aid);Object.assign(a,data);}else{day.acts.push({id:uid(),...data});}
   save();closeSheet();render();
 }
+const PDF_CACHE="viajes-pdfs-v1";
+async function downloadPdfOffline(tid,date,aid,btn){
+  const t=tget(tid);const day=t.itinerary.find(d=>d.date===date);const a=day&&day.acts.find(x=>x.id===aid);
+  if(!a||!a.pdfPath)return;
+  if(!("caches" in window)){toast("Tu navegador no soporta guardar offline");return;}
+  if(!cloudReady){toast("Conéctate a internet para descargarlo primero");return;}
+  if(btn)btn.textContent="⏳ Guardando...";
+  try{
+    const {data,error}=await sb.storage.from("trip-pdfs").createSignedUrl(a.pdfPath,300);
+    if(error)throw error;
+    const res=await fetch(data.signedUrl);
+    const blob=await res.blob();
+    const cache=await caches.open(PDF_CACHE);
+    await cache.put("/pdf-cache/"+a.pdfPath,new Response(blob,{headers:{"Content-Type":"application/pdf"}}));
+    toast("Guardado, ya lo puedes ver sin internet ✓");
+    if(btn)btn.textContent="✓ Guardado";
+  }catch(e){toast("No se pudo guardar el PDF");if(btn)btn.textContent="⬇️ Guardar offline";}
+}
 async function viewPdf(tid,date,aid){
   const t=tget(tid);const day=t.itinerary.find(d=>d.date===date);const a=day&&day.acts.find(x=>x.id===aid);
   if(!a||(!a.pdfPath&&!a.pdf)){toast("No hay documento");return;}
   if(a.pdfPath){
-    if(!cloudReady){toast("Conéctate a internet para ver el documento");return;}
+    if("caches" in window){
+      try{
+        const cache=await caches.open(PDF_CACHE);
+        const cached=await cache.match("/pdf-cache/"+a.pdfPath);
+        if(cached){const blob=await cached.blob();window.open(URL.createObjectURL(blob),"_blank");return;}
+      }catch(e){}
+    }
+    if(!cloudReady){toast("No tienes este PDF guardado y no hay internet");return;}
     try{
       const {data,error}=await sb.storage.from("trip-pdfs").createSignedUrl(a.pdfPath,60);
       if(error)throw error;
@@ -1023,7 +1054,7 @@ async function viewPdf(tid,date,aid){
 }
 function delAct(tid,date,aid){const t=tget(tid);const day=t.itinerary.find(d=>d.date===date);
   const a=day.acts.find(x=>x.id===aid);
-  if(a&&a.pdfPath&&cloudReady)sb.storage.from("trip-pdfs").remove([a.pdfPath]).catch(()=>{});
+  if(a&&a.pdfPath){if(cloudReady)sb.storage.from("trip-pdfs").remove([a.pdfPath]).catch(()=>{});clearPdfCache(a.pdfPath);}
   day.acts=day.acts.filter(a=>a.id!==aid);save();closeSheet();render();}
 
 /* -- destino -- */
