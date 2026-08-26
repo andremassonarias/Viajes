@@ -272,10 +272,16 @@
   .toast{position:fixed;bottom:calc(90px + var(--safe-b));left:50%;transform:translateX(-50%);
     background:#1A1A2E;color:#fff;padding:11px 18px;border-radius:22px;font-weight:600;font-size:14px;z-index:90;
     box-shadow:var(--shadow-lg);animation:up .25s}
+  #trip-map{width:100%;height:calc(100dvh - 260px);min-height:340px;border-radius:16px;background:var(--surface)}
+  .leaflet-popup-content{font-size:13.5px;font-weight:600}
+  .map-note{font-size:13px;color:var(--ink-2);text-align:center;padding:10px 4px}
 </style>
 </head>
 <body>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("./sw.js").catch(()=>{});});}</script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <div id="app"></div>
 
 <script>
@@ -528,12 +534,13 @@ function openTrip(id){curTab="resumen";go({name:"trip",id});}
 function tripView(t){
   if(!t)return homeView();
   const bg=t.cover.startsWith("data:")?`url('${t.cover}')`:t.cover;
-  const tabs=["resumen","itinerario","lugares","gastos"].map(k=>
+  const tabs=["resumen","itinerario","lugares","gastos","mapa"].map(k=>
     `<div class="tab ${curTab===k?"on":""}" onclick="setTab('${k}')">${k[0].toUpperCase()+k.slice(1)}</div>`).join("");
   let pane="";
   if(curTab==="resumen")pane=paneResumen(t);
   else if(curTab==="itinerario")pane=paneItinerario(t);
   else if(curTab==="lugares")pane=paneLugares(t);
+  else if(curTab==="mapa")pane=paneMapa(t);
   else pane=paneGastos(t);
   return `<div class="screen" style="${accentVars(t)}">
     <div class="t-hero">
@@ -551,7 +558,9 @@ function tripView(t){
     <div class="scroll"><div class="pane">${pane}</div></div>
   </div>`;
 }
-function setTab(k){curTab=k;render();}
+function setTab(k){curTab=k;render();
+  if(k==="mapa")setTimeout(()=>initMap(route.id),50);
+}
 function accentOf(t){return t.cdColor||"var(--grad)";}
 
 /* ---- Resumen ---- */
@@ -693,6 +702,67 @@ function paneGastos(t){
       ${exps}`;
   });
   return out+(editable?`<button class="btn" style="margin-top:8px;background:${accent}" onclick="sheetAddExp('${t.id}')">＋ Agregar gasto</button>`:"");
+}
+/* ---- Mapa ---- */
+function collectMapPoints(t){
+  const pts=[];
+  (t.destinos||[]).forEach(d=>{
+    (d.places||[]).forEach(p=>{
+      pts.push({label:p.name,query:p.name+", "+d.name,lat:p._lat,lng:p._lng,
+        set:(la,ln)=>{p._lat=la;p._lng=ln;}});
+    });
+  });
+  (t.itinerary||[]).forEach(day=>{
+    (day.acts||[]).forEach(a=>{
+      if(a.addr||a.loc){
+        pts.push({label:a.name,query:a.addr||(a.loc+", "+t.destination),lat:a._lat,lng:a._lng,
+          set:(la,ln)=>{a._lat=la;a._lng=ln;}});
+      }
+    });
+  });
+  return pts;
+}
+function paneMapa(t){
+  const pts=collectMapPoints(t);
+  if(!pts.length)return `<div class="day-empty" style="padding:20px 2px">Agrega direcciones a tus actividades (en Itinerario) o guarda lugares (en Lugares) para verlos aquí en el mapa.</div>`;
+  return `<div id="trip-map"></div><div class="map-note">📍 ${pts.length} lugar${pts.length!==1?'es':''} en el mapa</div>`;
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+async function geocodeQuery(query){
+  try{
+    const res=await fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&q="+encodeURIComponent(query));
+    const data=await res.json();
+    if(data&&data[0])return [parseFloat(data[0].lat),parseFloat(data[0].lon)];
+  }catch(e){}
+  return null;
+}
+let _leafletIconsReady=false;
+async function initMap(tripId){
+  if(typeof L==="undefined"){toast("No se pudo cargar el mapa (revisa tu internet)");return;}
+  if(!_leafletIconsReady){
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl:"https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+      iconUrl:"https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+      shadowUrl:"https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png"
+    });
+    _leafletIconsReady=true;
+  }
+  const t=tget(tripId);if(!t)return;
+  const el=document.getElementById("trip-map");if(!el)return;
+  if(window._leafletMap){window._leafletMap.remove();window._leafletMap=null;}
+  const map=L.map("trip-map").setView([20,0],2);
+  window._leafletMap=map;
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);
+  const pts=collectMapPoints(t);
+  const bounds=[];let changed=false;
+  for(const pt of pts){
+    let latlng=(pt.lat&&pt.lng)?[pt.lat,pt.lng]:null;
+    if(!latlng){latlng=await geocodeQuery(pt.query);if(latlng){pt.set(latlng[0],latlng[1]);changed=true;await sleep(300);}}
+    if(latlng){L.marker(latlng).addTo(map).bindPopup("<b>"+esc(pt.label)+"</b>");bounds.push(latlng);}
+  }
+  if(bounds.length)map.fitBounds(bounds,{padding:[30,30]});
+  if(changed)save();
 }
 function settleUp(bal,cur,t){
   const name=id=>{const p=t.travelers.find(x=>x.id===id);return p?p.name:"?";};
