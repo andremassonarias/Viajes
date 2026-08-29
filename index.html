@@ -273,6 +273,13 @@
     box-shadow:var(--shadow-lg);animation:up .25s}
   .toast-big{font-size:26px;font-weight:800;padding:20px 30px;border-radius:26px;
     background:linear-gradient(135deg,#FF6B9D 0%,#C44569 100%)}
+  .sync-badge{position:fixed;top:calc(var(--safe-t) + 10px);left:50%;transform:translateX(-50%) translateY(-140%);
+    background:rgba(20,20,30,.85);backdrop-filter:blur(8px);color:#fff;font-size:11.5px;font-weight:700;
+    padding:5px 12px;border-radius:14px;z-index:95;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;
+    letter-spacing:.01em}
+  .sync-badge.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+  .sync-badge.warn{background:rgba(200,60,50,.92)}
+  .sync-badge.syncing{background:rgba(60,60,70,.85)}
   #trip-map{width:100%;height:calc(100dvh - 260px);min-height:340px;border-radius:16px;background:var(--surface)}
   .leaflet-popup-content{font-size:13.5px;font-weight:600}
   .map-note{font-size:13px;color:var(--ink-2);text-align:center;padding:10px 4px}
@@ -284,6 +291,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <div id="app"></div>
+<div id="sync-badge" class="sync-badge"></div>
 
 <script>
 "use strict";
@@ -336,6 +344,7 @@ async function cloudInit(){
     state.trips.forEach(t=>{if(t.travelers&&t.travelers.length===1&&t.travelers[0].name==="Yo")t.travelers[0].name=myName;});
     save_local_only();
     cloudReady=true;
+    setSyncState(navigator.onLine?"saved":"offline");
     await handleInviteFromUrl();
     await pullTrips();
   }catch(e){console.warn("cloud init falló",e);}
@@ -390,8 +399,26 @@ async function pullTrips(){
 }
 function save_local_only(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 let _pushTimer=null;
+let syncState="saved"; // "saved" | "saving" | "offline" | "error"
+function setSyncState(s){
+  syncState=s;
+  const el=document.getElementById("sync-badge");
+  if(!el)return;
+  const map={
+    saved:{icon:"✓",txt:"Guardado",cls:""},
+    saving:{icon:"⏳",txt:"Guardando...",cls:"syncing"},
+    offline:{icon:"📴",txt:"Sin conexión",cls:"warn"},
+    error:{icon:"⚠️",txt:"No se guardó",cls:"warn"}
+  };
+  const d=map[s]||map.saved;
+  el.className="sync-badge visible "+d.cls;
+  el.textContent=d.icon+" "+d.txt;
+}
 async function flushPush(){
   if(!cloudReady)return;
+  if(!navigator.onLine){setSyncState("offline");return;}
+  setSyncState("saving");
+  let ok=true;
   for(const t of state.trips){
     const {_ownerId,_isOwner,...clean}=t;
     try{
@@ -400,14 +427,19 @@ async function flushPush(){
     }catch(e){
       console.warn("no se pudo sincronizar el viaje",t.id,e);
       toast("No se pudo guardar \""+t.name+"\" en la nube. Revisa tu internet e inténtalo de nuevo.");
+      ok=false;
     }
   }
+  setSyncState(ok?"saved":"error");
 }
 function pushAllTrips(){
   if(!cloudReady)return;
+  setSyncState(navigator.onLine?"saving":"offline");
   clearTimeout(_pushTimer);
   _pushTimer=setTimeout(flushPush,300);
 }
+window.addEventListener("online",()=>{if(cloudReady){setSyncState("saving");flushPush();}});
+window.addEventListener("offline",()=>setSyncState("offline"));
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"){clearTimeout(_pushTimer);flushPush();}});
 window.addEventListener("pagehide",()=>{clearTimeout(_pushTimer);flushPush();});
 async function shareTrip(tripId){
@@ -894,7 +926,47 @@ function sheetTripMenu(id){const t=tget(id);
     </div>
     <button class="btn" onclick="saveTripEdit('${id}')">Guardar cambios</button>
     <button class="btn ghost" style="margin-top:8px" onclick="shareTrip('${id}')">🔗 Compartir</button>
+    ${t._isOwner!==false?`<button class="btn ghost" style="margin-top:8px" onclick="sheetManageAccess('${id}')">👥 Administrar acceso</button>`:""}
     <button class="btn danger" style="margin-top:8px" onclick="delTrip('${id}')">Eliminar viaje</button>`,accentVars(t)));
+}
+async function sheetManageAccess(id){
+  const t=tget(id);
+  if(!cloudReady){toast("Conéctate a internet para administrar el acceso");return;}
+  openSheet(shell("Administrar acceso",`<p style="font-size:14px;color:var(--ink-2)">Cargando...</p>`,accentVars(t)));
+  try{
+    const {data:members,error}=await sb.from("trip_members").select("user_id").eq("trip_id",id);
+    if(error)throw error;
+    if(!members.length){
+      document.querySelector(".sheet-body").innerHTML=`<p style="font-size:14px;color:var(--ink-2)">Nadie más tiene acceso a este viaje todavía.</p>
+        <button class="btn ghost" onclick="closeSheet()">Cerrar</button>`;
+      return;
+    }
+    const ids=members.map(m=>m.user_id);
+    const {data:profiles}=await sb.from("profiles").select("id,name").in("id",ids);
+    const rows=members.map(m=>{
+      const p=(profiles||[]).find(p=>p.id===m.user_id);
+      const name=p?p.name:"Sin nombre";
+      return `<div class="menu-row"><span style="flex:1">${esc(name)}</span>
+        <button class="btn danger" style="width:auto;padding:8px 14px;margin:0" onclick="revokeAccess('${id}','${m.user_id}',this)">Quitar</button></div>`;
+    }).join("");
+    document.querySelector(".sheet-body").innerHTML=`
+      <p style="font-size:14px;color:var(--ink-2);margin-bottom:6px">Estas personas pueden ver y editar este viaje. Quitarlas aquí revoca su acceso de verdad (no solo de la lista de viajeros).</p>
+      ${rows}
+      <button class="btn ghost" style="margin-top:14px" onclick="closeSheet()">Cerrar</button>`;
+  }catch(e){console.error("sheetManageAccess error:",e);
+    document.querySelector(".sheet-body").innerHTML=`<p style="font-size:14px;color:var(--ink-2)">No se pudo cargar. Revisa tu internet e inténtalo de nuevo.</p>
+      <button class="btn ghost" onclick="closeSheet()">Cerrar</button>`;
+  }
+}
+async function revokeAccess(tripId,userId,btn){
+  if(!confirm("¿Quitarle el acceso a esta persona? Ya no podrá ver ni editar el viaje."))return;
+  if(btn)btn.textContent="...";
+  try{
+    const {error}=await sb.from("trip_members").delete().eq("trip_id",tripId).eq("user_id",userId);
+    if(error)throw error;
+    toast("Acceso quitado");
+    if(btn)btn.closest(".menu-row").remove();
+  }catch(e){console.error("revokeAccess error:",e);toast("No se pudo quitar el acceso. Inténtalo de nuevo.");if(btn)btn.textContent="Quitar";}
 }
 function toggleAllowEditM(id){const t=tget(id);t.allowEdit=!(t.allowEdit!==false);
   save();
