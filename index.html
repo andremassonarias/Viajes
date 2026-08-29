@@ -494,6 +494,22 @@ function render(){
   const app=document.getElementById("app");
   app.innerHTML = route.name==="home"?homeView():tripView(tget(route.id));
   app.scrollTop=0;
+  if(route.name==="trip"&&curTab==="itinerario")markCachedPdfs();
+}
+async function markCachedPdfs(){
+  if(!("caches" in window))return;
+  const t=tget(route.id);if(!t)return;
+  try{
+    const cache=await caches.open(PDF_CACHE);
+    for(const day of t.itinerary){
+      for(const a of day.acts){
+        if(!a.pdfPath)continue;
+        const btn=document.getElementById("pdfdl-"+a.id);if(!btn)continue;
+        const hit=await cache.match("/pdf-cache/"+a.pdfPath);
+        if(hit)btn.textContent="✓ Guardado";
+      }
+    }
+  }catch(e){}
 }
 
 /* ============ HOME ============ */
@@ -610,7 +626,7 @@ function paneItinerario(t){
           <span class="catpill" style="background:${cc}1a;color:${cc}">${c.emoji} ${c.lbl}</span>
           ${(a.pdf||a.pdfPath)?`<span style="display:inline-flex;gap:6px">
             <button class="pdf-chip" onclick="event.stopPropagation();viewPdf('${t.id}','${date}','${a.id}')">📄 Ver documento</button>
-            ${a.pdfPath?`<button class="pdf-chip" onclick="event.stopPropagation();downloadPdfOffline('${t.id}','${date}','${a.id}',this)">⬇️ Guardar offline</button>`:""}
+            ${a.pdfPath?`<button class="pdf-chip" id="pdfdl-${a.id}" onclick="event.stopPropagation();downloadPdfOffline('${t.id}','${date}','${a.id}',this)">⬇️ Guardar offline</button>`:""}
           </span>`:""}
           ${mapBlock(a.addr)}
         </div></div>`;
@@ -1023,22 +1039,24 @@ async function downloadPdfOffline(tid,date,aid,btn){
   }catch(e){toast("No se pudo guardar el PDF");if(btn)btn.textContent="⬇️ Guardar offline";}
 }
 async function viewPdf(tid,date,aid){
+  const win=window.open("","_blank"); // abrir la pestaña AL INSTANTE (dentro del clic), antes de cualquier "await"
   const t=tget(tid);const day=t.itinerary.find(d=>d.date===date);const a=day&&day.acts.find(x=>x.id===aid);
-  if(!a||(!a.pdfPath&&!a.pdf)){toast("No hay documento");return;}
+  if(!a||(!a.pdfPath&&!a.pdf)){if(win)win.close();toast("No hay documento");return;}
   if(a.pdfPath){
     if("caches" in window){
       try{
         const cache=await caches.open(PDF_CACHE);
         const cached=await cache.match("/pdf-cache/"+a.pdfPath);
-        if(cached){const blob=await cached.blob();window.open(URL.createObjectURL(blob),"_blank");return;}
+        if(cached){const blob=await cached.blob();const url=URL.createObjectURL(blob);
+          if(win)win.location.href=url;else window.open(url,"_blank");return;}
       }catch(e){}
     }
-    if(!cloudReady){toast("No tienes este PDF guardado y no hay internet");return;}
+    if(!cloudReady){if(win)win.close();toast("No tienes este PDF guardado y no hay internet");return;}
     try{
       const {data,error}=await sb.storage.from("trip-pdfs").createSignedUrl(a.pdfPath,60);
       if(error)throw error;
-      window.open(data.signedUrl,"_blank");
-    }catch(e){toast("No se pudo abrir el PDF");}
+      if(win)win.location.href=data.signedUrl;else window.open(data.signedUrl,"_blank");
+    }catch(e){if(win)win.close();toast("No se pudo abrir el PDF");}
     return;
   }
   try{
@@ -1049,8 +1067,8 @@ async function viewPdf(tid,date,aid){
     for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
     const blob=new Blob([arr],{type:mime});
     const url=URL.createObjectURL(blob);
-    window.open(url,"_blank");
-  }catch(e){toast("No se pudo abrir el PDF");}
+    if(win)win.location.href=url;else window.open(url,"_blank");
+  }catch(e){if(win)win.close();toast("No se pudo abrir el PDF");}
 }
 function delAct(tid,date,aid){const t=tget(tid);const day=t.itinerary.find(d=>d.date===date);
   const a=day.acts.find(x=>x.id===aid);
