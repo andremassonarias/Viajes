@@ -622,7 +622,7 @@ function paneResumen(t){
   const restLbl=cdEnd>0?`En curso - ${cdEnd} día${cdEnd!==1?"s":""} restante${cdEnd!==1?"s":""}`:"En curso - último día";
   const cdBox=cd>0?`<div class="countdown" style="${cs}"><div class="big">Faltan ${cd} días</div><div class="lbl">para ${esc(t.name)}</div></div>`
     :cd===0?`<div class="countdown" style="${cs}"><div class="big">¡Hoy es el día! 🎉</div><div class="lbl">${esc(t.name)}</div></div>`
-    :`<div class="countdown" style="${cs}"><div class="big">${restLbl}</div><div class="lbl">Disfruta ${esc(t.name)}</div></div>`;
+    :`<div class="countdown" style="${cs}"><div class="big" style="font-size:22px">${restLbl}</div><div class="lbl">Disfruta ${esc(t.name)}</div></div>`;
   const nActs=t.itinerary.reduce((s,d)=>s+d.acts.length,0);
   const totals=expenseTotals(t);
   const totalStr=Object.keys(totals).length?Object.entries(totals).map(([c,v])=>money(v,c)).join(" · "):"—";
