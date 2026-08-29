@@ -918,6 +918,8 @@ function mChangeCover(id,input){const f=input.files[0];if(!f)return;const r=new 
   r.onload=e=>{tget(id).cover=e.target.result;save();const el=document.getElementById("m-imgpick");
     el.style.backgroundImage=`url('${e.target.result}')`;el.textContent="";toast("Portada actualizada");};r.readAsDataURL(f);}
 function delTrip(id){if(!confirm("¿Eliminar este viaje? No se puede deshacer."))return;
+  const t=tget(id);
+  (t?.itinerary||[]).forEach(day=>(day.acts||[]).forEach(a=>{if(a.pdfPath)clearPdfCache(a.pdfPath);}));
   state.trips=state.trips.filter(t=>t.id!==id);save();closeSheet();go({name:"home"});toast("Viaje eliminado");
   if(cloudReady){
     sb.from("trips").delete().eq("id",id).then(()=>{}).catch(()=>{});
