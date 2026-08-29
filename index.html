@@ -271,6 +271,8 @@
   .toast{position:fixed;bottom:calc(90px + var(--safe-b));left:50%;transform:translateX(-50%);
     background:#1A1A2E;color:#fff;padding:11px 18px;border-radius:22px;font-weight:600;font-size:14px;z-index:90;
     box-shadow:var(--shadow-lg);animation:up .25s}
+  .toast-big{font-size:26px;font-weight:800;padding:20px 30px;border-radius:26px;
+    background:linear-gradient(135deg,#FF6B9D 0%,#C44569 100%)}
   #trip-map{width:100%;height:calc(100dvh - 260px);min-height:340px;border-radius:16px;background:var(--surface)}
   .leaflet-popup-content{font-size:13.5px;font-weight:600}
   .map-note{font-size:13px;color:var(--ink-2);text-align:center;padding:10px 4px}
@@ -340,7 +342,7 @@ async function cloudInit(){
 }
 function checkNameEasterEgg(name){
   if((name||"").trim().toLowerCase()==="isabellita"){
-    setTimeout(()=>toast("Te amo ❤️"),400);
+    setTimeout(()=>toast("Te amo ❤️",true),400);
   }
 }
 function askName(){
@@ -802,8 +804,8 @@ function openSheet(html,styleVars){
   document.body.appendChild(ov);
 }
 function closeSheet(){const o=document.getElementById("ov");if(o)o.remove();img_tmp=null;}
-function toast(msg){const el=document.createElement("div");el.className="toast";el.textContent=msg;
-  document.body.appendChild(el);setTimeout(()=>el.remove(),1800);}
+function toast(msg,big){const el=document.createElement("div");el.className="toast"+(big?" toast-big":"");el.textContent=msg;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),big?3600:1800);}
 function shell(title,body){return `<div class="grabber"></div>
   <div class="sheet-head"><button class="x" onclick="closeSheet()">Cancelar</button><h2>${title}</h2><span style="width:56px"></span></div>
   <div class="sheet-body">${body}</div>`;}
