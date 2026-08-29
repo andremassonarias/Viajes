@@ -400,6 +400,7 @@ async function pullTrips(){
 function save_local_only(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
 let _pushTimer=null;
 let syncState="saved"; // "saved" | "saving" | "offline" | "error"
+let _syncBadgeTimer=null;
 function setSyncState(s){
   syncState=s;
   const el=document.getElementById("sync-badge");
@@ -413,6 +414,9 @@ function setSyncState(s){
   const d=map[s]||map.saved;
   el.className="sync-badge visible "+d.cls;
   el.textContent=d.icon+" "+d.txt;
+  clearTimeout(_syncBadgeTimer);
+  const holdMs=(s==="offline"||s==="error")?4000:1800;
+  _syncBadgeTimer=setTimeout(()=>{el.classList.remove("visible");},holdMs);
 }
 async function flushPush(){
   if(!cloudReady)return;
